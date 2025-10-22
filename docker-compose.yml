@@ -1,0 +1,12 @@
+version: "3.8"
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    environment:
+      - DATABASE_URL=file:./dev.db
+      - JWT_SECRET=change-this-secret
+    command: sh -lc "npx prisma migrate deploy && npm run start"
