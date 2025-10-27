@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Layout from "../components/Layout";
 
 export default function Login() {
   const [username, setUsername] = useState("");

@@ -27,14 +27,9 @@ export default function Dashboard({ user, chartData }) {
 }
 
 export const getServerSideProps = withAuthPage(
-  async (context, user) => {
+  async (_context, user) => {
     // sample chart data (7 days)
-    const days = 7;
-    const labels = Array.from({ length: days }).map((_, i) =>
-      new Date(
-        Date.now() - (days - 1 - i) * 24 * 60 * 60 * 1000
-      ).toLocaleDateString(undefined, { weekday: "short" })
-    );
+    const labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
     const values = [12, 18, 16, 22, 20, 19, 23];
 
     return {

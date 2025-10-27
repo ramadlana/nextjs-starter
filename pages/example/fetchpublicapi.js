@@ -41,7 +41,7 @@ export default function FetchPublic({ user }) {
   }, []);
 
   return (
-    <Layout>
+    <Layout user={user}>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl">Welcome, {user?.username}</h2>
         <form method="POST" action="/api/logout">
