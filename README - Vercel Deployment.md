@@ -81,24 +81,9 @@ Then:
 
 ---
 
-### **6️⃣ Check DB Connection**
+## Check project log is there any error?
 
-Once deployed, test an API route that queries the DB, for example:
-
-```js
-// pages/api/test.js
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
-
-export default async function handler(req, res) {
-  const users = await prisma.user.findMany();
-  res.json(users);
-}
-```
-
-Visit `/api/test` — if it returns JSON, your connection is perfect ✅
-
----
+Project -> logs
 
 ---
 
