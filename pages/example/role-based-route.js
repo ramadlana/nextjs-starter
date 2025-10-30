@@ -1,15 +1,12 @@
 import Layout from "../../components/Layout";
-import SimpleChart from "../../components/SimpleChart";
 import { withAuthPage } from "../../lib/auth";
 
 export default function Test({ user }) {
-  const data = {
-    labels: ["Mon", "Tue", "Wed", "Thu", "Fri"],
-    values: [12, 19, 8, 15, 22],
-  };
+  const example = "This is a role-based protected route example.";
   return (
     <Layout user={user}>
       <div className="bg-white p-4 rounded shadow">
+        <h1>{example}</h1>
         <pre>{JSON.stringify(user)}</pre>
       </div>
     </Layout>
