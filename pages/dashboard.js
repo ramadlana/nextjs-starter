@@ -15,7 +15,7 @@ export default function Dashboard({ user, chartData }) {
       </section>
 
       <section>
-        <DashboardCards />
+        <DashboardCards userValue={1000} />
       </section>
 
       <section className="bg-white p-4 rounded shadow">
@@ -31,11 +31,15 @@ export const getServerSideProps = withAuthPage(
     // sample chart data (7 days)
     const labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
     const values = [12, 18, 16, 22, 20, 19, 23];
+    const chartData = {
+      labels,
+      values,
+    };
 
     return {
       props: {
         user,
-        chartData: { labels, values },
+        chartData,
       },
     };
   },

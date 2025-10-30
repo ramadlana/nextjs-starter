@@ -42,13 +42,6 @@ export default function FetchPublic({ user }) {
 
   return (
     <Layout user={user}>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl">Welcome, {user?.username}</h2>
-        <form method="POST" action="/api/logout">
-          <button className="px-3 py-1 border rounded">Sign out</button>
-        </form>
-      </div>
-
       <div className="bg-white p-4 rounded shadow mb-6">
         <h3 className="text-xl mb-2">Weekly Stats</h3>
         <SimpleChart data={baseData} />

@@ -92,6 +92,12 @@ export default function Layout({ children, user }) {
                       >
                         File Upload
                       </Link>
+                      <Link
+                        href="/example/role-based-route"
+                        className="block px-4 py-2 text-sm hover:bg-gray-100"
+                      >
+                        Role-based Route
+                      </Link>
                     </div>
                   )}
                 </div>

@@ -1,8 +1,8 @@
-export default function DashboardCards({ cards }) {
+export default function DashboardCards({ cards, userValue }) {
   const data = cards || [
     {
       title: "Users",
-      value: "1,248",
+      value: userValue,
       delta: "+3.2%",
       color: "bg-indigo-50",
       icon: "users",

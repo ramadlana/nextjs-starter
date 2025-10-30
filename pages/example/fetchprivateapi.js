@@ -29,16 +29,7 @@ export default function FetchPrivate({ user }) {
   }, []);
 
   return (
-    <Layout>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl">
-          Welcome to private weather, {user?.username}
-        </h2>
-        <form method="POST" action="/api/logout">
-          <button className="px-3 py-1 border rounded">Sign out</button>
-        </form>
-      </div>
-
+    <Layout user={user}>
       <div className="bg-white p-4 rounded shadow">
         {loading ? (
           <p className="text-center text-gray-500">Loading weather data...</p>
@@ -51,4 +42,9 @@ export default function FetchPrivate({ user }) {
 }
 
 // ✅ Page protected via SSR authentication
-export const getServerSideProps = withAuthPage(null, ["USER"]);
+export const getServerSideProps = withAuthPage(
+  async (_context, user) => {
+    return { props: { user } };
+  },
+  ["USER"]
+);
