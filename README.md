@@ -1,111 +1,174 @@
 # DashboardXIQC — minimal secure Next.js starter
 
-This project is a minimal Next.js application with username/password auth (argon2), SQLite via Prisma, Tailwind CSS, and a simple Chart.js dashboard. It includes a Dockerfile and docker-compose for local development.
+This project is a minimal **Next.js application** with username/password authentication (**Argon2**), **SQLite via Prisma**, **Tailwind CSS**, and a simple **Chart.js dashboard**.
+It includes a `Dockerfile` and `docker-compose.yml` for reproducible local development.
 
-## Quick Start
+---
 
-### Using Test Data (Recommended for Development)
+## 🚀 Quick Start
 
-1. Install dependencies
+### 🧩 Using Test Data (Recommended for Development)
 
-```powershell
-npm install
-```
+1. **Install dependencies**
 
-2. Set environment variable (create a .env file):
+   ```bash
+   npm install
+   ```
 
-```powershell
-DATABASE_URL=file:./prisma/app.db
-JWT_SECRET=development_secret_key_change_me
-```
+2. **Create environment file**
 
-3. Initialize the database:
+   ```bash
+   DATABASE_URL=file:./app.db
+   JWT_SECRET=development_secret_key_change_me
+   ```
 
-```powershell
-npx prisma generate
-npx prisma migrate dev --name init
-```
+3. **Ensure database path exists**
 
-4. **Seed with test users:**
+   ```bash
+   touch app.db
+   ```
 
-```powershell
-npm run db:seed
-```
+   > 💡 You can skip manual creation — the next command (`prisma migrate dev`) will automatically create `app.db` if it doesn’t exist.
 
-This creates 3 test accounts:
+4. **Initialize the database**
 
-- **admin** / admin123
-- **testuser** / test123
-- **demo** / demo123
+   ```bash
+   npx prisma generate
+   npx prisma migrate dev --name init
+   ```
 
-5. Run in development:
+5. **Seed test users**
 
-```powershell
-npm run dev
-```
+   ```bash
+   npm run db:seed
+   ```
 
-6. Open http://localhost:3000 and sign in with any test account!
+   This creates 3 demo accounts:
 
-### Manual Setup (Without Test Data)
+   | Username | Password |
+   | -------- | -------- |
+   | admin    | admin123 |
+   | testuser | test123  |
+   | demo     | demo123  |
 
-1. Install dependencies
+6. **Run in development**
 
-```powershell
-npm ci
-```
+   ```bash
+   npm run dev
+   ```
 
-2. Set environment variable (create a .env file):
+7. Open [http://localhost:3000](http://localhost:3000) and sign in with any test account.
 
-```powershell
-setx DATABASE_URL "file:./prisma/app.db"
-setx JWT_SECRET "change-this-secret"
-```
+---
 
-Or create a `.env` file with:
+### ⚙️ Manual Setup (Without Test Data)
 
-DATABASE_URL=file:./dev.db
-JWT_SECRET=change-this-secret
+1. **Install dependencies**
 
-3. Initialize the database and Prisma client:
+   ```bash
+   npm ci
+   ```
 
-```powershell
-npx prisma generate
-npx prisma migrate dev --name init --preview-feature
-```
+2. **Set environment variables**
 
-4. Run in development:
+   ```bash
+   setx DATABASE_URL "file:./app.db"
+   setx JWT_SECRET "change-this-secret"
+   ```
 
-```powershell
-npm run dev
-```
+   or create a `.env` file manually:
 
-Open http://localhost:3000 and register a user.
+   ```bash
+   DATABASE_URL=file:./app.db
+   JWT_SECRET=change-this-secret
+   ```
 
-Docker (recommended for reproducible environments):
+3. **Create empty database file**
 
-```powershell
+   ```bash
+   touch app.db
+   ```
+
+4. **Initialize Prisma**
+
+   ```bash
+   npx prisma generate
+   npx prisma migrate dev --name init
+   ```
+
+5. **Run application**
+
+   ```bash
+   npm run dev
+   ```
+
+   Then visit [http://localhost:3000](http://localhost:3000) and register your first user.
+
+---
+
+## 🐳 Run with Docker (Recommended)
+
+For a fully reproducible setup:
+
+```bash
 docker compose up --build
 ```
 
-Security notes and best practices applied:
+Prisma will automatically generate and initialize the SQLite `app.db` file within the container at `/app/prisma/app.db`.
 
-- Passwords hashed with argon2 (a strong memory-hard algorithm).
-- JWT stored in HTTP-only, SameSite=Strict cookie and Secure flag set in production.
-- Reduced exposure of X-Powered-By via Next config.
+---
+
+## 🔒 Security Notes and Best Practices
+
+- Passwords hashed using **Argon2** (strong memory-hard algorithm).
+- JWT stored as **HTTP-only + SameSite=Strict** cookies (Secure in production).
+- Reduced exposure of `X-Powered-By` header.
 - Short JWT expiry (1 hour).
 
-Recommendations to harden further:
+### Recommended Hardening
 
-- Use HTTPS in production and set Secure cookie flag.
-- Rotate and store `JWT_SECRET` in a secrets manager.
-- Implement CSRF protections for state-changing POST requests (e.g., logout).
-- Verify JWTs server-side in all protected APIs and periodically check revocation/blacklist.
-- Add rate limiting on auth endpoints and account lockout.
+- Enforce **HTTPS** and Secure cookie flags.
+- Rotate `JWT_SECRET` regularly (store in secrets manager).
+- Implement **CSRF** protection for POST actions (logout, update, etc.).
+- Verify JWTs server-side for all protected APIs.
+- Add **rate limiting + lockout** for failed logins.
 
-How to modify:
+---
 
-- Pages under `pages/` — add API routes in `pages/api/`.
-- Prisma schema under `prisma/schema.prisma`. After changes run: `npx prisma migrate dev`.
-- Tailwind customization in `tailwind.config.js` and `styles/globals.css`.
+## 🧠 Modifying the App
 
-This scaffold is intentionally small and focuses on secure defaults for username/password auth with SQLite. For production use, migrate to PostgreSQL or MySQL and add HTTPS, monitoring, and a stronger secrets setup.
+| Area          | Path                                        | Notes                                 |
+| ------------- | ------------------------------------------- | ------------------------------------- |
+| Pages & APIs  | `pages/`                                    | Add or modify routes and endpoints    |
+| Prisma Schema | `prisma/schema.prisma`                      | After edits: `npx prisma migrate dev` |
+| Styles        | `tailwind.config.js` & `styles/globals.css` | Customize UI / colors / fonts         |
+
+---
+
+## 🗄️ Database Notes
+
+- Default local DB → `prisma/app.db` (SQLite)
+- Automatically created by Prisma on `migrate dev`
+- To migrate to **PostgreSQL (Neon)** or **MySQL**, just update:
+
+  ```bash
+  DATABASE_URL="postgresql://user:pass@host/db?sslmode=require"
+  ```
+
+  Then:
+
+  ```bash
+  npx prisma migrate deploy
+  ```
+
+---
+
+## 📦 Summary
+
+| Environment | Database          | Run Command                   | Purpose          |
+| ----------- | ----------------- | ----------------------------- | ---------------- |
+| Dev         | SQLite (`app.db`) | `npm run dev`                 | Local test       |
+| Docker      | SQLite            | `docker compose up --build`   | Reproducible     |
+| Prod        | Neon / PostgreSQL | `docker run` or Vercel Deploy | Cloud deployment |
+
+---

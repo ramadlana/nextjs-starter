@@ -1,7 +1,7 @@
 import Layout from "../../components/Layout";
 import SimpleChart from "../../components/SimpleChart";
 import { withAuthPage } from "../../lib/auth";
-import React, { useState } from "react";
+import { useState } from "react";
 
 export default function Uploadfiles({ user }) {
   const data = {
@@ -60,41 +60,42 @@ export default function Uploadfiles({ user }) {
     <Layout>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl">Welcome, {user?.username}</h2>
-        <pre>{JSON.stringify(user)}</pre>
+
         <form method="POST" action="/api/logout">
           <button className="px-3 py-1 border rounded">Sign out</button>
         </form>
       </div>
 
-      <div className="mb-4">
-        <form onSubmit={handleSubmit} className="flex items-center space-x-2">
-          <input type="file" onChange={onFileChange} />
-          <button
-            type="submit"
-            className="px-4 py-2 border rounded"
-            disabled={uploading}
-          >
-            {uploading ? "Uploading..." : "Upload"}
-          </button>
-        </form>
-        {uploadError && <div className="text-red-600 mt-2">{uploadError}</div>}
-        {uploadUrl && (
-          <div className="mt-2">
-            Uploaded:{" "}
-            <a
-              href={uploadUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="text-blue-600 underline"
-            >
-              {uploadUrl}
-            </a>
-          </div>
-        )}
-      </div>
-
       <div className="bg-white p-4 rounded shadow">
-        <SimpleChart data={data} />
+        <pre>{JSON.stringify(user)}</pre>
+        <div className="mb-4">
+          <form onSubmit={handleSubmit} className="flex items-center space-x-2">
+            <input type="file" onChange={onFileChange} />
+            <button
+              type="submit"
+              className="px-4 py-2 border rounded"
+              disabled={uploading}
+            >
+              {uploading ? "Uploading..." : "Upload"}
+            </button>
+          </form>
+          {uploadError && (
+            <div className="text-red-600 mt-2">{uploadError}</div>
+          )}
+          {uploadUrl && (
+            <div className="mt-2">
+              Uploaded:{" "}
+              <a
+                href={uploadUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-600 underline"
+              >
+                {uploadUrl}
+              </a>
+            </div>
+          )}
+        </div>
       </div>
     </Layout>
   );
