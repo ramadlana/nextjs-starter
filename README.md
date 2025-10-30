@@ -15,7 +15,7 @@ npm install
 2. Set environment variable (create a .env file):
 
 ```powershell
-DATABASE_URL=file:./app.db
+DATABASE_URL=file:./prisma/app.db
 JWT_SECRET=development_secret_key_change_me
 ```
 
@@ -57,7 +57,7 @@ npm ci
 2. Set environment variable (create a .env file):
 
 ```powershell
-setx DATABASE_URL "file:./dev.db"
+setx DATABASE_URL "file:./prisma/app.db"
 setx JWT_SECRET "change-this-secret"
 ```
 
