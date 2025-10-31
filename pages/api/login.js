@@ -1,6 +1,6 @@
 import prisma from "../../lib/prisma";
 import argon2 from "argon2";
-import jwt from "jsonwebtoken";
+import { SignJWT } from "jose";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end();
@@ -12,15 +12,17 @@ export default async function handler(req, res) {
   const ok = await argon2.verify(user.password, password);
   if (!ok) return res.status(401).json({ error: "Invalid credentials" });
 
-  const token = jwt.sign(
-    {
-      sub: String(user.id),
-      username: user.username,
-      role: user.role, // <- include role
-    },
-    process.env.JWT_SECRET || "dev-secret",
-    { expiresIn: "1h" }
+  const secret = new TextEncoder().encode(
+    process.env.JWT_SECRET || "dev-secret"
   );
+  const token = await new SignJWT({
+    sub: String(user.id),
+    username: user.username,
+    role: user.role, // <- include role
+  })
+    .setProtectedHeader({ alg: "HS256" })
+    .setExpirationTime("1h")
+    .sign(secret);
   // Set HTTP-only cookie
   const cookieParts = [
     `dashx-token=${token}`,

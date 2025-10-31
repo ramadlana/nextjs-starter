@@ -200,28 +200,27 @@ export default function Layout({ children, user }) {
                       Settings
                     </Link>
                     <div className="border-t" />
-                    <form method="POST" action="/api/logout">
-                      <button
-                        onClick={async () => {
-                          try {
-                            const res = await fetch("/api/logout", {
-                              method: "POST",
-                            });
-                            if (res.ok) {
-                              window.location.href = "/login"; // ✅ redirect after success
-                            } else {
-                              alert("Logout failed. Please try again.");
-                            }
-                          } catch (err) {
-                            console.error("Logout error:", err);
-                            alert("Something went wrong during logout.");
+                    <button
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        try {
+                          const res = await fetch("/api/logout", {
+                            method: "POST",
+                          });
+                          if (res.ok) {
+                            window.location.href = "/login";
+                          } else {
+                            alert("Logout failed. Please try again.");
                           }
-                        }}
-                        className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-                      >
-                        Sign out
-                      </button>
-                    </form>
+                        } catch (err) {
+                          console.error("Logout error:", err);
+                          alert("Something went wrong during logout.");
+                        }
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                    >
+                      Sign out
+                    </button>
                   </div>
                 )}
               </div>

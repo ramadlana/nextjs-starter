@@ -7,6 +7,8 @@ node_modules/
 /coverage
 *.db-journal
 test.db
+.vitest/
+.vitest-cache/
 
 # prisma migrations
 /prisma/migrations/
@@ -16,6 +18,8 @@ test.db
 /out/
 /build
 .next
+.turbo/
+.swc/
 
 # Production
 /dist
@@ -43,6 +47,7 @@ yarn-error.log*
 # Typescript
 *.tsbuildinfo
 next-env.d.ts
+.tsc/
 
 # Database
 *.db
@@ -115,6 +120,7 @@ lerna-debug.log*
 # Prisma
 prisma/*.db
 prisma/*.db-journal
+prisma/migrations/**/*.lock
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
@@ -122,3 +128,16 @@ prisma/*.db-journal
 # Temporary folders
 tmp/
 temp/
+
+# Lock files (optional - remove if you want to commit them)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+# bun.lockb
+
+# Tailwind
+.tailwindcss/
+
+# Mock files for testing
+__mocks__/
+!**/__mocks__/*.js
