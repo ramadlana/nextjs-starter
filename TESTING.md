@@ -1,6 +1,6 @@
 # Testing Documentation
 
-This document provides comprehensive information about testing in the DashboardXIQC project.
+This document provides comprehensive information about testing in the Starterkit project.
 
 ## Overview
 
