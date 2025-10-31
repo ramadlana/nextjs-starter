@@ -7,6 +7,8 @@ It includes a `Dockerfile` and `docker-compose.yml` for reproducible local devel
 
 Every database change between Neon(Postgresql) and Sqlite need to remove /prisma/migrations folder and run:
 
+makesure its using correct database provider on `/prisma/schema.prisma`
+
 ```
 npx prisma generate
 npx prisma migrate dev --name init
