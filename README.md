@@ -1,11 +1,93 @@
-# DashboardXIQC — minimal secure Next.js starter
+# Next Tail Starterkit — Next JS + Plain Tailwind CSS with Simple Auth
 
 This project is a minimal **Next.js application** with username/password authentication (**Argon2**), **SQLite via Prisma**, **Tailwind CSS**, and a simple **Chart.js dashboard**.
 It includes a `Dockerfile` and `docker-compose.yml` for reproducible local development.
 
+## 🚀 Quick Start
+
+Every database change between Neon(Postgresql) and Sqlite need to remove /prisma/migrations folder and run:
+
+```
+npx prisma generate
+npx prisma migrate dev --name init
+```
+
+### ⚙️ Manual Setup (Using SQLite)
+
+1. **Install dependencies**
+
+   ```bash
+   npm ci
+   ```
+
+2. **Set environment variables**
+
+   ```bash
+   setx DATABASE_URL "file:./app.db"
+   setx JWT_SECRET "change-this-secret"
+   ```
+
+   or create a `.env` file manually:
+
+   ```bash
+   DATABASE_URL=file:./app.db
+   JWT_SECRET=change-this-secret
+   ```
+
+3. **Create empty database file**
+
+   ```bash
+   touch app.db
+   ```
+
+4. **Initialize Prisma**
+
+   ```bash
+   npx prisma generate
+   npx prisma migrate dev --name init
+   ```
+
+5. **Run application**
+
+   ```bash
+   npm run dev
+   ```
+
+   Then visit [http://localhost:3000](http://localhost:3000) and register your first user.
+
 ---
 
-## 🚀 Quick Start
+### ⚙️ Manual Setup (Using Neondb)
+
+1. **Install dependencies**
+
+   ```bash
+   npm ci
+   ```
+
+2. **Set environment variables**
+
+   ```bash
+   DATABASE_URL='postgresql://xxxx'
+   JWT_SECRET=development_secret_key_change_me
+   ```
+
+3. **Initialize Prisma**
+
+   ```bash
+   npx prisma generate
+   npx prisma migrate dev --name init
+   ```
+
+4. **Run application**
+
+   ```bash
+   npm run dev
+   ```
+
+   Then visit [http://localhost:3000](http://localhost:3000) and register your first user.
+
+---
 
 ### 🧩 Using Test Data (Recommended for Development)
 
@@ -58,51 +140,6 @@ It includes a `Dockerfile` and `docker-compose.yml` for reproducible local devel
    ```
 
 7. Open [http://localhost:3000](http://localhost:3000) and sign in with any test account.
-
----
-
-### ⚙️ Manual Setup (Without Test Data)
-
-1. **Install dependencies**
-
-   ```bash
-   npm ci
-   ```
-
-2. **Set environment variables**
-
-   ```bash
-   setx DATABASE_URL "file:./app.db"
-   setx JWT_SECRET "change-this-secret"
-   ```
-
-   or create a `.env` file manually:
-
-   ```bash
-   DATABASE_URL=file:./app.db
-   JWT_SECRET=change-this-secret
-   ```
-
-3. **Create empty database file**
-
-   ```bash
-   touch app.db
-   ```
-
-4. **Initialize Prisma**
-
-   ```bash
-   npx prisma generate
-   npx prisma migrate dev --name init
-   ```
-
-5. **Run application**
-
-   ```bash
-   npm run dev
-   ```
-
-   Then visit [http://localhost:3000](http://localhost:3000) and register your first user.
 
 ---
 
