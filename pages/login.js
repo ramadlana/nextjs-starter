@@ -24,7 +24,7 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-md bg-white p-6 rounded shadow">
-        <h1 className="text-xl font-semibold mb-4">Sign in</h1>
+        <h1 className="text-xl font-semibold mb-4">Log in</h1>
         <form onSubmit={submit} className="space-y-4">
           <input
             className="w-full p-2 border rounded"
@@ -50,7 +50,7 @@ export default function Login() {
         </form>
         <br />
         <a className="px-4 py-2 border rounded" href="/register">
-          Doesn't have an account? register here
+          Doesn't have an account? Register here
         </a>
       </div>
     </div>
