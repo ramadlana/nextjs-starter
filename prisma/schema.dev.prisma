@@ -1,5 +1,7 @@
-// Import shared models
+// prisma/schema.local.prisma
+
 import "./models.prisma"
+
 generator client {
   provider = "prisma-client-js"
 }

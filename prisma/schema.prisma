@@ -1,9 +1,15 @@
-// Import shared models
+// prisma/schema.prod.prisma
+
+// 1️⃣ Import always goes first
 import "./models.prisma"
+
+// 2️⃣ Generator next
 generator client {
   provider = "prisma-client-js"
 }
 
+// 3️⃣ Then datasource
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
