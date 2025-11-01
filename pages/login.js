@@ -44,11 +44,14 @@ export default function Login() {
             <button className="px-4 py-2 bg-indigo-600 text-white rounded">
               Sign in
             </button>
-            <a className="px-4 py-2 border rounded" href="/register">
-              Register
-            </a>
+            {/* create account link */}
+            <br />
           </div>
         </form>
+        <br />
+        <a className="px-4 py-2 border rounded" href="/register">
+          Doesn't have an account? register here
+        </a>
       </div>
     </div>
   );
