@@ -9,7 +9,7 @@ export default function Dashboard({ user, chartData }) {
     <Layout user={user}>
       <section>
         <h1 className="text-2xl font-semibold">
-          Welcome back, {user?.username}
+          HALO CAKRAWALA Welcome back, {user?.username}
         </h1>
         <p className="text-sm text-gray-500">Overview of system metrics</p>
       </section>
