@@ -26,6 +26,10 @@ export default function Dashboard({ user, chartData }) {
         <DashboardCards userValue={1000} />
       </section>
 
+
+      <div className="my-6" />
+
+
       <Card>
         <CardHeader>
           <CardTitle>Recent trend</CardTitle>

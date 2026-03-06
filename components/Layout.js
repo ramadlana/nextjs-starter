@@ -119,6 +119,7 @@ export default function Layout({ children, user }) {
     "/example/client-public-api": "Public API",
     "/example/uploadfiles": "File Upload",
     "/example/role-based-route": "Role-based Route",
+    "/example/markdown": "Markdown",
     "/admin/users": "User Management",
     "/admin/logs": "System Logs",
   };
@@ -192,6 +193,9 @@ export default function Layout({ children, user }) {
               <DropdownMenuItem asChild>
                 <Link href="/example/role-based-route">Role-based Route</Link>
               </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/example/markdown">Markdown</Link>
+              </DropdownMenuItem>
               {user?.role === "ADMIN" && (
                 <>
                   <DropdownMenuSeparator />
@@ -235,6 +239,10 @@ export default function Layout({ children, user }) {
             <Link href="/example/role-based-route" className={navLinkClass("/example/role-based-route")}>
               <IconLayout className="h-5 w-5 shrink-0" />
               <span>Role-based</span>
+            </Link>
+            <Link href="/example/markdown" className={navLinkClass("/example/markdown")}>
+              <IconLayout className="h-5 w-5 shrink-0" />
+              <span>Markdown</span>
             </Link>
             {user?.role === "ADMIN" && (
               <>
