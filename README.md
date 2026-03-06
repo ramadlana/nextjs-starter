@@ -1,20 +1,22 @@
 # Next Tail Starterkit — Next JS + Plain Tailwind CSS with Simple Auth
 
-This project is a minimal **Next.js application** with username/password authentication (**Argon2**), **SQLite via Prisma**, **Tailwind CSS**, and a simple **Chart.js dashboard**.
-It includes a `Dockerfile` and `docker-compose.yml` for reproducible local development.
+This project is a minimal **Next.js application** with username/password authentication (**Argon2**), **PostgreSQL via Prisma** (Neon, Supabase, or self-hosted), **Tailwind CSS**, and a simple **Chart.js dashboard**.
+It includes a `Dockerfile` and `docker-compose.yml` for reproducible local development with PostgreSQL.
 
 ## 🚀 Quick Start
 
-Every database change between Neon(Postgresql) and Sqlite need to delete /prisma/migrations folder and run:
+Ensure `prisma/schema.prisma` uses `provider = "postgresql"` (default in this repo). Then:
 
-makesure its using correct database provider on `/prisma/schema.prisma`
-
-```
+```bash
 npx prisma generate
 npx prisma migrate dev --name init
 ```
 
-### ⚙️ Manual Setup (Using SQLite)
+---
+
+### ⚙️ Manual Setup (PostgreSQL)
+
+Use any PostgreSQL provider: **Neon**, **Supabase**, **Railway**, **Render**, or **self-hosted PostgreSQL**.
 
 1. **Install dependencies**
 
@@ -24,55 +26,18 @@ npx prisma migrate dev --name init
 
 2. **Set environment variables**
 
-   ```bash
-   setx DATABASE_URL "file:./app.db"
-   setx JWT_SECRET "change-this-secret"
-   ```
-
-   or create a `.env` file manually:
+   Create a `.env` file:
 
    ```bash
-   DATABASE_URL=file:./app.db
+   DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DATABASE?sslmode=require"
    JWT_SECRET=change-this-secret
    ```
 
-3. **Create empty database file**
+   Examples:
 
-   ```bash
-   touch app.db
-   ```
-
-4. **Initialize Prisma**
-
-   ```bash
-   npx prisma generate
-   npx prisma migrate dev --name init
-   ```
-
-5. **Run application**
-
-   ```bash
-   npm run dev
-   ```
-
-   Then visit [http://localhost:3000](http://localhost:3000) and register your first user.
-
----
-
-### ⚙️ Manual Setup (Using Neondb)
-
-1. **Install dependencies**
-
-   ```bash
-   npm ci
-   ```
-
-2. **Set environment variables**
-
-   ```bash
-   DATABASE_URL='postgresql://xxxx'
-   JWT_SECRET=development_secret_key_change_me
-   ```
+   - **Neon:** `postgresql://user:pass@ep-xxx.region.aws.neon.tech/neondb?sslmode=require`
+   - **Supabase:** `postgresql://postgres:pass@db.xxx.supabase.co:5432/postgres`
+   - **Local:** `postgresql://postgres:postgres@localhost:5432/app`
 
 3. **Initialize Prisma**
 
@@ -102,26 +67,18 @@ npx prisma migrate dev --name init
 2. **Create environment file**
 
    ```bash
-   DATABASE_URL=file:./app.db
+   DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DATABASE?sslmode=require"
    JWT_SECRET=development_secret_key_change_me
    ```
 
-3. **Ensure database path exists**
-
-   ```bash
-   touch app.db
-   ```
-
-   > 💡 You can skip manual creation — the next command (`prisma migrate dev`) will automatically create `app.db` if it doesn’t exist.
-
-4. **Initialize the database**
+3. **Initialize the database**
 
    ```bash
    npx prisma generate
    npx prisma migrate dev --name init
    ```
 
-5. **Seed test users**
+4. **Seed test users**
 
    ```bash
    npm run db:seed
@@ -135,25 +92,25 @@ npx prisma migrate dev --name init
    | testuser | test123  |
    | demo     | demo123  |
 
-6. **Run in development**
+5. **Run in development**
 
    ```bash
    npm run dev
    ```
 
-7. Open [http://localhost:3000](http://localhost:3000) and sign in with any test account.
+6. Open [http://localhost:3000](http://localhost:3000) and sign in with any test account.
 
 ---
 
 ## 🐳 Run with Docker (Recommended)
 
-For a fully reproducible setup:
+Docker Compose starts the app and a **PostgreSQL** container. No cloud DB required for local dev.
 
 ```bash
 docker compose up --build
 ```
 
-Prisma will automatically generate and initialize the SQLite `app.db` file within the container at `/app/prisma/app.db`.
+The app will run migrations and listen on [http://localhost:3000](http://localhost:3000). Use the same test accounts after seeding (run `npm run db:seed` inside the container if the DB is fresh).
 
 ---
 
@@ -174,6 +131,17 @@ Prisma will automatically generate and initialize the SQLite `app.db` file withi
 
 ---
 
+## 📖 User Guide
+
+See **[USER_GUIDE.md](./USER_GUIDE.md)** for how to:
+
+- Create auth-required and role-limited pages
+- Protect API routes (`withAuth`, `withRole`)
+- Use SSR vs client-side rendering
+- Add public pages and admin-only APIs
+
+---
+
 ## 🧠 Modifying the App
 
 | Area          | Path                                        | Notes                                 |
@@ -186,15 +154,15 @@ Prisma will automatically generate and initialize the SQLite `app.db` file withi
 
 ## 🗄️ Database Notes
 
-- Default local DB → `prisma/app.db` (SQLite)
-- Automatically created by Prisma on `migrate dev`
-- To migrate to **PostgreSQL (Neon)** or **MySQL**, just update:
+- This project uses **PostgreSQL only** (Neon, Supabase, self-hosted, or Docker).
+- Set `DATABASE_URL` to your Postgres connection string. For cloud providers (Neon, Supabase), add `?sslmode=require` when required.
+- After changing the schema, run:
 
   ```bash
-  DATABASE_URL="postgresql://user:pass@host/db?sslmode=require"
+  npx prisma migrate dev --name your_migration_name
   ```
 
-  Then:
+  For production:
 
   ```bash
   npx prisma migrate deploy
@@ -204,10 +172,10 @@ Prisma will automatically generate and initialize the SQLite `app.db` file withi
 
 ## 📦 Summary
 
-| Environment | Database          | Run Command                   | Purpose          |
-| ----------- | ----------------- | ----------------------------- | ---------------- |
-| Dev         | SQLite (`app.db`) | `npm run dev`                 | Local test       |
-| Docker      | SQLite            | `docker compose up --build`   | Reproducible     |
-| Prod        | Neon / PostgreSQL | `docker run` or Vercel Deploy | Cloud deployment |
+| Environment | Database   | Run Command                 | Purpose          |
+| ----------- | ---------- | --------------------------- | ---------------- |
+| Dev         | PostgreSQL | `npm run dev`               | Local / cloud DB |
+| Docker      | PostgreSQL | `docker compose up --build` | Local Postgres   |
+| Prod        | PostgreSQL | Vercel / `docker run`       | Neon, Supabase, etc. |
 
 ---

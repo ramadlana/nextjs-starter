@@ -1,5 +1,7 @@
 ### **1️⃣ Prepare Your Next.js + Prisma Project**
 
+This project uses **PostgreSQL only** (Neon, Supabase, or any Postgres provider). No SQLite.
+
 Create a `vercel.json` in project root:
 
 ```json

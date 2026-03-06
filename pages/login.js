@@ -52,6 +52,10 @@ export default function Login() {
         <a className="px-4 py-2 border rounded" href="/register">
           Doesn't have an account? Register here
         </a>
+        <br />
+        <a className="text-sm text-gray-500 mt-2 inline-block" href="/about">
+          About
+        </a>
       </div>
     </div>
   );

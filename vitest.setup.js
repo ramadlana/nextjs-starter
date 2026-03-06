@@ -8,4 +8,6 @@ global.TextDecoder = TextDecoder;
 
 // Mock environment variables for tests
 process.env.JWT_SECRET = "test-secret-key-for-testing";
-process.env.DATABASE_URL = "file:./test.db";
+// Use test DB URL from env or a placeholder (unit tests mock Prisma; for integration tests set DATABASE_URL)
+process.env.DATABASE_URL =
+  process.env.DATABASE_URL || "postgresql://test:test@localhost:5432/test";

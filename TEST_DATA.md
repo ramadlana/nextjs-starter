@@ -1,6 +1,6 @@
 # Test Data & Seeding
 
-This document provides information about test users and how to seed the database with standard test data.
+This document provides information about test users and how to seed the database with standard test data. The project uses **PostgreSQL**; ensure `DATABASE_URL` points to your Postgres instance before seeding.
 
 ## Test User Accounts
 

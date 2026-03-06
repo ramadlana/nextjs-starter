@@ -229,11 +229,13 @@ jest.mock("@prisma/client", () => ({
 
 ### Environment Variables
 
-Test environment variables are set in `jest.setup.js`:
+Test environment variables are set in `vitest.setup.js`:
 
 ```javascript
 process.env.JWT_SECRET = "test-secret-key-for-testing";
-process.env.DATABASE_URL = "file:./test.db";
+// PostgreSQL: use DATABASE_URL env or a test DB URL (unit tests mock Prisma)
+process.env.DATABASE_URL =
+  process.env.DATABASE_URL || "postgresql://test:test@localhost:5432/test";
 ```
 
 ### Mocking
