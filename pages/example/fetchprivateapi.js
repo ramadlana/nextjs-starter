@@ -83,6 +83,5 @@ export default function FetchPrivate({ user }) {
 export const getServerSideProps = withAuthPage(
   async (_context, user) => {
     return { props: { user } };
-  },
-  ["USER"]
+  }
 );

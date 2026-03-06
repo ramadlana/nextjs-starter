@@ -110,6 +110,5 @@ export default function Uploadfiles({ user }) {
 export const getServerSideProps = withAuthPage(
   async (_context, user) => {
     return { props: { user } };
-  },
-  ["USER"]
+  }
 );

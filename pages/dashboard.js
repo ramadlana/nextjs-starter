@@ -51,6 +51,5 @@ export const getServerSideProps = withAuthPage(
         chartData,
       },
     };
-  },
-  ["USER"]
+  }
 );

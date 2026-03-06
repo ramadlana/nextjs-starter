@@ -39,6 +39,5 @@ export default function Profile({ user }) {
 export const getServerSideProps = withAuthPage(
   async (_context, user) => {
     return { props: { user } };
-  },
-  ["USER"]
+  }
 );

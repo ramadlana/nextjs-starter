@@ -12,31 +12,37 @@ async function main() {
       username: "admin",
       password: "admin123",
       description: "Admin test user",
+      role: "ADMIN",
     },
     {
       username: "testuser",
       password: "test123",
       description: "Standard test user",
+      role: "USER",
     },
     {
       username: "demo",
       password: "demo123",
       description: "Demo user for presentations",
+      role: "USER",
     },
   ];
 
   for (const userData of testUsers) {
     const hashedPassword = await argon2.hash(userData.password);
+    const role = userData.role || "USER";
 
     try {
       const user = await prisma.user.upsert({
         where: { username: userData.username },
         update: {
           password: hashedPassword,
+          role,
         },
         create: {
           username: userData.username,
           password: hashedPassword,
+          role,
         },
       });
 

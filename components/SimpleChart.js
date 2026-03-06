@@ -19,12 +19,14 @@ ChartJS.register(
 );
 
 export default function SimpleChart({ data }) {
+  const labels = Array.isArray(data?.labels) ? data.labels : [];
+  const values = Array.isArray(data?.values) ? data.values : [];
   const chartData = {
-    labels: data.labels,
+    labels,
     datasets: [
       {
         label: "Metric",
-        data: data.values,
+        data: values,
         borderColor: "rgb(30 41 59)",
         backgroundColor: "rgba(30, 41, 59, 0.08)",
         fill: true,
