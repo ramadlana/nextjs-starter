@@ -13,6 +13,22 @@ import { cn } from "@/lib/utils";
 
 const SIDEBAR_COLLAPSED_KEY = "sidebar-collapsed";
 
+// Single source of truth for sidebar menu (avoids defining links twice for collapsed vs expanded)
+const EXAMPLE_LINKS = [
+  { href: "/example/ssr", label: "SSR (Server-Side)", short: "SSR" },
+  { href: "/example/csr", label: "CSR (Client-Side)", short: "CSR" },
+  { href: "/example/server-proxy", label: "Server proxy (API key)", short: "Server proxy" },
+  { href: "/example/client-public-api", label: "Public API (direct)", short: "Public API" },
+  { href: "/example/uploadfiles", label: "File Upload", short: "File Upload" },
+  { href: "/example/role-based-route", label: "Role-based Route", short: "Role-based" },
+  { href: "/example/markdown", label: "Markdown", short: "Markdown" },
+  { href: "/example/tremor-ui", label: "Tremor UI", short: "Tremor UI" },
+];
+const ADMIN_LINKS = [
+  { href: "/admin/users", label: "User Management", short: "Users" },
+  { href: "/admin/logs", label: "System Logs", short: "Logs" },
+];
+
 // Icons as components for consistent sizing
 function IconHome({ className = "w-5 h-5" }) {
   return (
@@ -120,6 +136,7 @@ export default function Layout({ children, user }) {
     "/example/uploadfiles": "File Upload",
     "/example/role-based-route": "Role-based Route",
     "/example/markdown": "Markdown",
+    "/example/tremor-ui": "Tremor UI",
     "/admin/users": "User Management",
     "/admin/logs": "System Logs",
   };
@@ -174,37 +191,19 @@ export default function Layout({ children, user }) {
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent side="right" align="start" className="w-52">
-              <DropdownMenuItem asChild>
-                <Link href="/example/ssr">SSR (Server-Side)</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/example/csr">CSR (Client-Side)</Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href="/example/server-proxy">Server proxy (API key)</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/example/client-public-api">Public API (direct)</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/example/uploadfiles">File Upload</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/example/role-based-route">Role-based Route</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/example/markdown">Markdown</Link>
-              </DropdownMenuItem>
+              {EXAMPLE_LINKS.map(({ href, label }) => (
+                <DropdownMenuItem key={href} asChild>
+                  <Link href={href}>{label}</Link>
+                </DropdownMenuItem>
+              ))}
               {user?.role === "ADMIN" && (
                 <>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href="/admin/users">User Management</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/admin/logs">System Logs</Link>
-                  </DropdownMenuItem>
+                  {ADMIN_LINKS.map(({ href, label }) => (
+                    <DropdownMenuItem key={href} asChild>
+                      <Link href={href}>{label}</Link>
+                    </DropdownMenuItem>
+                  ))}
                 </>
               )}
             </DropdownMenuContent>
@@ -216,34 +215,12 @@ export default function Layout({ children, user }) {
                 Examples
               </span>
             </div>
-            <Link href="/example/ssr" className={navLinkClass("/example/ssr")}>
-              <IconLayout className="h-5 w-5 shrink-0" />
-              <span>SSR</span>
-            </Link>
-            <Link href="/example/csr" className={navLinkClass("/example/csr")}>
-              <IconLayout className="h-5 w-5 shrink-0" />
-              <span>CSR</span>
-            </Link>
-            <Link href="/example/server-proxy" className={navLinkClass("/example/server-proxy")}>
-              <IconLayout className="h-5 w-5 shrink-0" />
-              <span>Server proxy</span>
-            </Link>
-            <Link href="/example/client-public-api" className={navLinkClass("/example/client-public-api")}>
-              <IconLayout className="h-5 w-5 shrink-0" />
-              <span>Public API</span>
-            </Link>
-            <Link href="/example/uploadfiles" className={navLinkClass("/example/uploadfiles")}>
-              <IconLayout className="h-5 w-5 shrink-0" />
-              <span>File Upload</span>
-            </Link>
-            <Link href="/example/role-based-route" className={navLinkClass("/example/role-based-route")}>
-              <IconLayout className="h-5 w-5 shrink-0" />
-              <span>Role-based</span>
-            </Link>
-            <Link href="/example/markdown" className={navLinkClass("/example/markdown")}>
-              <IconLayout className="h-5 w-5 shrink-0" />
-              <span>Markdown</span>
-            </Link>
+            {EXAMPLE_LINKS.map(({ href, short }) => (
+              <Link key={href} href={href} className={navLinkClass(href)}>
+                <IconLayout className="h-5 w-5 shrink-0" />
+                <span>{short}</span>
+              </Link>
+            ))}
             {user?.role === "ADMIN" && (
               <>
                 <div className="px-3 pt-4 pb-1">
@@ -251,14 +228,12 @@ export default function Layout({ children, user }) {
                     Admin
                   </span>
                 </div>
-                <Link href="/admin/users" className={navLinkClass("/admin/users")}>
-                  <IconAdmin className="h-5 w-5 shrink-0" />
-                  <span>Users</span>
-                </Link>
-                <Link href="/admin/logs" className={navLinkClass("/admin/logs")}>
-                  <IconAdmin className="h-5 w-5 shrink-0" />
-                  <span>Logs</span>
-                </Link>
+                {ADMIN_LINKS.map(({ href, short }) => (
+                  <Link key={href} href={href} className={navLinkClass(href)}>
+                    <IconAdmin className="h-5 w-5 shrink-0" />
+                    <span>{short}</span>
+                  </Link>
+                ))}
               </>
             )}
           </>

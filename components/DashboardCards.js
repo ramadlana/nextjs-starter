@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-export default function DashboardCards({ cards, userValue }) {
+export default function DashboardCards({ cards, userValue, activeValue, revenueValue, uptimeValue, tasksValue, weatherValue }) {
   const data = cards || [
     {
       title: "Users",
@@ -12,35 +12,35 @@ export default function DashboardCards({ cards, userValue }) {
     },
     {
       title: "Active",
-      value: "842",
+      value: activeValue,
       delta: "+1.1%",
       variant: "success",
       icon: "bolt",
     },
     {
       title: "Revenue",
-      value: "$12.4k",
+      value: revenueValue,
       delta: "+6.5%",
       variant: "warning",
       icon: "wallet",
     },
     {
       title: "Uptime",
-      value: "99.99%",
+      value: uptimeValue,
       delta: "0.0%",
       variant: "info",
       icon: "server",
     },
     {
       title: "Tasks",
-      value: "32",
+      value: tasksValue,
       delta: "-4%",
       variant: "destructive",
       icon: "check",
     },
     {
       title: "Weather",
-      value: "18°C",
+      value: weatherValue,
       delta: "+2°C",
       variant: "muted",
       icon: "cloud",
