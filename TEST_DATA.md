@@ -6,11 +6,11 @@ This document provides information about test users and how to seed the database
 
 The following test accounts are created automatically when you run the seed script:
 
-| Username   | Password   | Purpose                                        |
-| ---------- | ---------- | ---------------------------------------------- |
-| `admin`    | `admin123` | Admin test user for administrative testing     |
-| `testuser` | `test123`  | Standard test user for general testing         |
-| `demo`     | `demo123`  | Demo user for presentations and demonstrations |
+| Username   | Password   | Role   | Purpose                                        |
+| ---------- | ---------- | ------ | ---------------------------------------------- |
+| `admin`    | `admin123` | ADMIN  | Admin test user for administrative testing     |
+| `testuser` | `test123`  | USER   | Standard test user for general testing         |
+| `demo`     | `demo123`  | USER   | Demo user for presentations and demonstrations |
 
 ## Database Seeding
 
@@ -79,7 +79,7 @@ Use different test accounts to test various scenarios:
 To add more test users or modify existing ones:
 
 1. Edit `prisma/seed.js`
-2. Add or modify users in the `testUsers` array:
+2. Add or modify users in the `testUsers` array (include `role` for role-based access):
 
 ```javascript
 const testUsers = [
@@ -87,6 +87,7 @@ const testUsers = [
     username: "newuser",
     password: "newpass123",
     description: "Description of user",
+    role: "USER",  // or "ADMIN" for admin users
   },
   // Add more users here
 ];
@@ -125,9 +126,7 @@ When preparing for production:
 
 2. **Disable seeding**: Remove or comment out the `prisma.seed` configuration in `package.json`
 
-3. **Create real admin account**: Use the registration endpoint with a secure password
-
-4. **Implement user roles**: Extend the User model to include roles/permissions if needed
+3. **Create real admin account**: Use the registration endpoint with a secure password, then set `role: "ADMIN"` in the database for that user (the app already has roles in the User model)
 
 ## Troubleshooting
 
@@ -205,5 +204,5 @@ For automated testing in CI/CD pipelines:
 ## Additional Resources
 
 - [Prisma Seeding Guide](https://www.prisma.io/docs/guides/database/seed-database)
-- [Authentication Documentation](./AUTHENTICATION.md)
-- [Production Readiness Checklist](./PRODUCTION_READINESS.md)
+- [USER_GUIDE.md](./USER_GUIDE.md) — auth, roles, and protected routes
+- [CODE_REVIEW.md](./CODE_REVIEW.md) — security and hardening notes

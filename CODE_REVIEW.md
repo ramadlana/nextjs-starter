@@ -2,39 +2,41 @@
 
 **Focus:** Bugs, security, performance, redundant packages. **Date:** March 2026.
 
+**Status:** All P0 fixes below have been **applied** in the codebase. P1/P2 items remain as recommendations.
+
 ---
 
 ## 1. Bugs
 
-### 1.1 **withAuthPage(..., ["USER"]) blocks ADMIN users (P0)**
+### 1.1 **withAuthPage(..., ["USER"]) blocks ADMIN users (P0)** ✅ Fixed
 
 - **Where:** `pages/dashboard.js`, `pages/profile.js`, `pages/settings.js`, `pages/example/fetchprivateapi.js`, `pages/example/fetchpublicapi.js`, `pages/example/uploadfiles.js`.
-- **Issue:** These pages use `withAuthPage(getServerSideProps, ["USER"])`. When `allowedRoles` is non-empty, only those roles are allowed. So **ADMIN** users are redirected to `/restricted` when visiting Dashboard, Profile, Settings, and Example pages. ADMIN should be able to access all of these.
-- **Fix:** Use `withAuthPage(getServerSideProps)` with **no second argument** for “any authenticated user”. Reserve `["ADMIN"]` only for routes that are admin-only (e.g. `role-based-route.js`, future admin panels).
+- **Issue:** These pages used `withAuthPage(getServerSideProps, ["USER"])`, so ADMIN users were redirected to `/restricted`.
+- **Fix applied:** All use `withAuthPage(getServerSideProps)` with no second argument so any authenticated user (including ADMIN) can access them.
 
 ---
 
-### 1.2 **Seed does not set role for admin user**
+### 1.2 **Seed does not set role for admin user** ✅ Fixed
 
 - **Where:** `prisma/seed.js`.
-- **Issue:** All users are created with Prisma default `role: "USER"`. The user `"admin"` is never given `role: "ADMIN"`, so Admin menu and role-based routes cannot be tested with seeded data.
-- **Fix:** In the seed, set `role: "ADMIN"` when creating/upserting the `"admin"` user (e.g. in `create`/`update` for that entry).
+- **Issue:** The seeded `"admin"` user was never given `role: "ADMIN"`, so admin routes could not be tested.
+- **Fix applied:** Seed now sets `role: "ADMIN"` for the admin user and `role: "USER"` for testuser and demo in both `create` and `update`.
 
 ---
 
-### 1.3 **Layout links to non-existent admin pages (404)**
+### 1.3 **Layout links to non-existent admin pages (404)** ✅ Fixed
 
 - **Where:** `components/Layout.js` — links to `/admin/users` and `/admin/logs`.
-- **Issue:** There are no `pages/admin/users.js` or `pages/admin/logs.js`. ADMIN users see broken links.
-- **Fix:** Either (a) add minimal placeholder pages under `pages/admin/` (e.g. `users.js`, `logs.js`) that use `withAuthPage(..., ["ADMIN"])`, or (b) remove these menu items until the pages exist.
+- **Issue:** Those pages did not exist; ADMIN users saw 404.
+- **Fix applied:** Placeholder pages added: `pages/admin/users.js` and `pages/admin/logs.js`, both protected with `withAuthPage(..., ["ADMIN"])`.
 
 ---
 
-### 1.4 **SimpleChart can throw on missing/invalid data**
+### 1.4 **SimpleChart can throw on missing/invalid data** ✅ Fixed
 
-- **Where:** `components/SimpleChart.js` — `data.labels` and `data.values` are used directly.
-- **Issue:** If `data` is `undefined` or missing `labels`/`values`, the component throws and can break the page (e.g. after a failed API call).
-- **Fix:** Guard at the start: ensure `data` is an object and default `labels` and `values` to empty arrays when missing.
+- **Where:** `components/SimpleChart.js` — `data.labels` and `data.values` were used directly.
+- **Issue:** Missing or invalid `data` could throw and break the page.
+- **Fix applied:** Component now defaults `labels` and `values` to empty arrays when missing or not arrays.
 
 ---
 
@@ -118,18 +120,14 @@
 
 ## 5. Summary of recommended fixes
 
-| Priority | Item | Action |
+| Priority | Item | Status |
 |----------|------|--------|
-| P0 | withAuthPage(["USER"]) blocks ADMIN | Use `withAuthPage(fn)` for dashboard, profile, settings, example pages |
-| P0 | Seed admin role | Set `role: "ADMIN"` for `"admin"` user in seed |
-| P0 | Layout admin links 404 | Add placeholder admin pages or remove links |
-| P0 | SimpleChart crash | Guard `data` / default `labels` and `values` to `[]` |
-| P1 | Nav search | Implement or remove search input |
-| P1 | Uploads public | Serve via protected route and store outside `public/` if private |
-| P1 | Login/register | Add rate limiting |
-| P2 | Chart.js register | Register once (e.g. in _app or guarded in SimpleChart) |
-| P2 | Upload body size | Reject with 413 when `Content-Length` > 5 MB |
-
----
-
-*Concrete code changes for P0 items are applied in the codebase below.*
+| P0 | withAuthPage(["USER"]) blocks ADMIN | ✅ Fixed — use `withAuthPage(fn)` for dashboard, profile, settings, example pages |
+| P0 | Seed admin role | ✅ Fixed — `admin` user has `role: "ADMIN"` in seed |
+| P0 | Layout admin links 404 | ✅ Fixed — `pages/admin/users.js` and `pages/admin/logs.js` added |
+| P0 | SimpleChart crash | ✅ Fixed — guard `data` / default `labels` and `values` to `[]` |
+| P1 | Nav search | Recommended — implement or remove search input |
+| P1 | Uploads public | Recommended — serve via protected route if private |
+| P1 | Login/register | Recommended — add rate limiting |
+| P2 | Chart.js register | Optional — register once (e.g. in _app) |
+| P2 | Upload body size | Optional — reject with 413 when `Content-Length` > 5 MB |

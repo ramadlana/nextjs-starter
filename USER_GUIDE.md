@@ -62,8 +62,10 @@ export const getServerSideProps = withAuthPage(async (context, user) => {
 
 **Examples in this repo:**
 
-- `pages/dashboard.js` — auth required, optional server data
+- `pages/dashboard.js` — auth required (any role), optional server data
+- `pages/profile.js`, `pages/settings.js` — auth required (any role)
 - `pages/example/fetchprivateapi.js` — auth + client-side fetch to protected API
+- `pages/example/fetchpublicapi.js` — auth + client-side public API call
 - `pages/example/uploadfiles.js` — auth + file upload to protected API
 
 **Notes:**
@@ -99,9 +101,10 @@ export const getServerSideProps = withAuthPage(
 );
 ```
 
-**Example in this repo:**
+**Examples in this repo:**
 
-- `pages/example/role-based-route.js` — only `ADMIN` can see it.
+- `pages/example/role-based-route.js` — only `ADMIN` can see it
+- `pages/admin/users.js`, `pages/admin/logs.js` — admin placeholders (ADMIN only)
 
 **Roles:** Defined in `prisma/schema.prisma` (`User.role`). Default is `"USER"`. Set `ADMIN` in DB or seed for admin users.
 
@@ -233,7 +236,7 @@ export const getServerSideProps = withAuthPage(async (_c, user) => {
 | Type | Example | How |
 |------|---------|-----|
 | **Public** | Landing, about, pricing | No `getServerSideProps`, or use it without `withAuthPage`. No `user` prop required. |
-| **Login required** | Dashboard, profile | `getServerSideProps = withAuthPage(...)` (no second argument or `["USER", "ADMIN"]`). |
+| **Login required** | Dashboard, profile, settings, examples | `getServerSideProps = withAuthPage(...)` (no second argument = any authenticated user). |
 | **Role-only** | Admin panel | `getServerSideProps = withAuthPage(..., ["ADMIN"])`. |
 
 **Public page example:** `pages/about.js`.
@@ -256,14 +259,20 @@ pages/
   login.js      # Public
   register.js   # Public
   about.js      # Public (example)
-  dashboard.js  # Auth required (USER)
+  dashboard.js  # Auth required (any role)
+  profile.js    # Auth required (any role)
+  settings.js   # Auth required (any role)
   restricted.js # Shown when role is not allowed
+
+  admin/
+    users.js    # ADMIN only (placeholder)
+    logs.js     # ADMIN only (placeholder)
 
   example/
     role-based-route.js   # ADMIN only
-    fetchprivateapi.js   # USER, CSR + protected API
-    fetchpublicapi.js    # USER, CSR + public API
-    uploadfiles.js       # USER, file upload
+    fetchprivateapi.js   # Auth required, CSR + protected API
+    fetchpublicapi.js    # Auth required, CSR + public API
+    uploadfiles.js       # Auth required, file upload
 
   api/
     login.js

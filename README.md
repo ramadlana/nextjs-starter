@@ -60,13 +60,13 @@ Use any PostgreSQL provider: **Neon**, **Supabase**, **Railway**, **Render**, or
   ```bash
    npm run db:seed
   ```
-   This creates 3 demo accounts:
+   This creates 3 demo accounts. The `admin` user has role **ADMIN** (for testing admin-only routes); others have **USER**:
 
-  | Username | Password |
-  | -------- | -------- |
-  | admin    | admin123 |
-  | testuser | test123  |
-  | demo     | demo123  |
+  | Username | Password   | Role  |
+  | -------- | ---------- | ----- |
+  | admin    | admin123   | ADMIN |
+  | testuser | test123    | USER  |
+  | demo     | demo123    | USER  |
 
 5. **Run in development**
   ```bash
@@ -105,14 +105,16 @@ The app will run migrations and listen on [http://localhost:3000](http://localho
 
 ---
 
-## 📖 User Guide
+## 📖 Documentation
 
-See **[USER_GUIDE.md](./USER_GUIDE.md)** for how to:
+- **[USER_GUIDE.md](./USER_GUIDE.md)** — how to:
 
 - Create auth-required and role-limited pages
 - Protect API routes (`withAuth`, `withRole`)
 - Use SSR vs client-side rendering
 - Add public pages and admin-only APIs
+
+- **[CODE_REVIEW.md](./CODE_REVIEW.md)** — senior engineer review (bugs, security, performance, redundant packages) and applied P0 fixes.
 
 ---
 

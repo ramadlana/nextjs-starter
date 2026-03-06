@@ -54,13 +54,15 @@ git push
 3. It will detect **Next.js** automatically
 4. In **Environment Variables**, add:
 
-| Key                   | Value                | Notes                  |
-| --------------------- | -------------------- | ---------------------- |
-| `DATABASE_URL`        | `postgresql://xxxxx` | from Neon              |
-| `JWT_SECRET`          | `supersecret_123456` | use long random string |
-| `NEXT_PUBLIC_API_URL` | _(optional)_         | for client calls       |
+| Key                   | Value                | Notes                                                                 |
+| --------------------- | -------------------- | --------------------------------------------------------------------- |
+| `DATABASE_URL`        | `postgresql://xxxxx` | from Neon (add `?sslmode=require` if required)                        |
+| `JWT_SECRET`          | _(required)_         | long random string; production fails without it (see CODE_REVIEW.md)  |
+| `NEXT_PUBLIC_API_URL` | _(optional)_         | for client calls                                                       |
 
 Click **Deploy** 🎉
+
+For security and hardening (rate limiting, uploads, JWT), see **[CODE_REVIEW.md](./CODE_REVIEW.md)**.
 
 ---
 

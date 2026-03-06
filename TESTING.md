@@ -4,11 +4,11 @@ This document provides comprehensive information about testing in the Starterkit
 
 ## Overview
 
-The project uses **Jest** and **React Testing Library** for unit and integration testing.
+The project uses **Vitest** and **React Testing Library** for unit and integration testing.
 
 ### Testing Stack
 
-- **Jest** - JavaScript testing framework
+- **Vitest** - Fast unit test framework (Vite-powered)
 - **React Testing Library** - Testing utilities for React components
 - **@testing-library/jest-dom** - Custom matchers for DOM assertions
 - **@testing-library/user-event** - Simulate user interactions
@@ -214,12 +214,14 @@ describe("User Authentication", () => {
 ### 5. Mock External Dependencies
 
 ```javascript
+import { vi } from "vitest";
+
 // Mock Prisma client
-jest.mock("@prisma/client", () => ({
-  PrismaClient: jest.fn(() => ({
+vi.mock("@prisma/client", () => ({
+  PrismaClient: vi.fn(() => ({
     user: {
-      findUnique: jest.fn(),
-      create: jest.fn(),
+      findUnique: vi.fn(),
+      create: vi.fn(),
     },
   })),
 }));
@@ -240,14 +242,16 @@ process.env.DATABASE_URL =
 
 ### Mocking
 
-Jest provides powerful mocking capabilities:
+Vitest provides powerful mocking capabilities (Jest-compatible API):
 
 ```javascript
+import { vi } from "vitest";
+
 // Mock a module
-jest.mock("../lib/myModule");
+vi.mock("../lib/myModule");
 
 // Mock a function
-const mockFn = jest.fn();
+const mockFn = vi.fn();
 mockFn.mockReturnValue("value");
 mockFn.mockResolvedValue(Promise.resolve("value"));
 
@@ -319,10 +323,12 @@ it("should throw error for invalid input", () => {
 ### Testing with Timers
 
 ```javascript
-it("should debounce function calls", () => {
-  jest.useFakeTimers();
+import { vi } from "vitest";
 
-  const fn = jest.fn();
+it("should debounce function calls", () => {
+  vi.useFakeTimers();
+
+  const fn = vi.fn();
   const debouncedFn = debounce(fn, 1000);
 
   debouncedFn();
@@ -331,10 +337,10 @@ it("should debounce function calls", () => {
 
   expect(fn).not.toHaveBeenCalled();
 
-  jest.runAllTimers();
+  vi.runAllTimers();
   expect(fn).toHaveBeenCalledTimes(1);
 
-  jest.useRealTimers();
+  vi.useRealTimers();
 });
 ```
 
@@ -360,9 +366,9 @@ Add to `.vscode/launch.json`:
 {
   "type": "node",
   "request": "launch",
-  "name": "Jest Debug",
-  "program": "${workspaceFolder}/node_modules/.bin/jest",
-  "args": ["--runInBand", "--no-cache"],
+  "name": "Vitest Debug",
+  "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/vitest",
+  "args": ["run", "--no-file-parallelism"],
   "console": "integratedTerminal",
   "internalConsoleOptions": "neverOpen"
 }
@@ -373,8 +379,8 @@ Add to `.vscode/launch.json`:
 ### Tests Failing After Dependency Update
 
 ```bash
-# Clear Jest cache
-npx jest --clearCache
+# Clear Vitest cache
+npx vitest run --clearCache
 
 # Reinstall dependencies
 rm -rf node_modules
@@ -383,7 +389,7 @@ npm install
 
 ### Module Not Found Errors
 
-Check `moduleNameMapper` in `jest.config.js` for correct path aliases.
+Check path aliases in `jsconfig.json` (e.g. `@/`) and `vitest.config.js` if you use custom resolve.
 
 ### Timeout Errors
 
@@ -415,10 +421,10 @@ it("slow test", async () => {
 
 ## Resources
 
-- [Jest Documentation](https://jestjs.io/docs/getting-started)
+- [Vitest Documentation](https://vitest.dev/)
 - [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
 - [Testing Best Practices](https://kentcdodds.com/blog/common-mistakes-with-react-testing-library)
-- [Jest Cheat Sheet](https://github.com/sapegin/jest-cheat-sheet)
+- [Vitest vs Jest API](https://vitest.dev/guide/migration.html)
 
 ## Contributing
 
