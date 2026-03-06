@@ -71,12 +71,19 @@ export default function Layout({ children, user }) {
                       </svg>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="w-44">
+                  <DropdownMenuContent align="start" className="w-48">
                     <DropdownMenuItem asChild>
-                      <Link href="/example/fetchprivateapi">Private Weather</Link>
+                      <Link href="/example/ssr">SSR (Server-Side)</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/example/fetchpublicapi">Public Weather</Link>
+                      <Link href="/example/csr">CSR (Client-Side)</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href="/example/server-proxy">Server proxy (API key)</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/example/client-public-api">Public API (direct)</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link href="/example/uploadfiles">File Upload</Link>

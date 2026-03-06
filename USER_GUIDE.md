@@ -64,8 +64,8 @@ export const getServerSideProps = withAuthPage(async (context, user) => {
 
 - `pages/dashboard.js` — auth required (any role), optional server data
 - `pages/profile.js`, `pages/settings.js` — auth required (any role)
-- `pages/example/fetchprivateapi.js` — auth + client-side fetch to protected API
-- `pages/example/fetchpublicapi.js` — auth + client-side public API call
+- `pages/example/server-proxy.js` — client calls your API route; server calls external API with key
+- `pages/example/client-public-api.js` — client calls public external API directly (no key)
 - `pages/example/uploadfiles.js` — auth + file upload to protected API
 
 **Notes:**
@@ -221,8 +221,8 @@ export const getServerSideProps = withAuthPage(async (_c, user) => {
 
 **Examples:**
 
-- `pages/example/fetchprivateapi.js` — calls protected `/api/weatherprivate` (cookie sent automatically).
-- `pages/example/fetchpublicapi.js` — calls public external API from the client.
+- `pages/example/server-proxy.js` — calls `/api/weatherprivate` (cookie sent automatically; server holds API key).
+- `pages/example/client-public-api.js` — calls public external API (e.g. Open-Meteo) from the browser.
 
 **When to use CSR:**
 
@@ -270,8 +270,8 @@ pages/
 
   example/
     role-based-route.js   # ADMIN only
-    fetchprivateapi.js   # Auth required, CSR + protected API
-    fetchpublicapi.js    # Auth required, CSR + public API
+    server-proxy.js      # Auth required; client → your API → external API (key on server)
+    client-public-api.js # Auth required; client → public external API (no key)
     uploadfiles.js       # Auth required, file upload
 
   api/

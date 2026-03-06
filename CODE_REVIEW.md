@@ -10,7 +10,7 @@
 
 ### 1.1 **withAuthPage(..., ["USER"]) blocks ADMIN users (P0)** ✅ Fixed
 
-- **Where:** `pages/dashboard.js`, `pages/profile.js`, `pages/settings.js`, `pages/example/fetchprivateapi.js`, `pages/example/fetchpublicapi.js`, `pages/example/uploadfiles.js`.
+- **Where:** `pages/dashboard.js`, `pages/profile.js`, `pages/settings.js`, `pages/example/server-proxy.js`, `pages/example/client-public-api.js`, `pages/example/uploadfiles.js`.
 - **Issue:** These pages used `withAuthPage(getServerSideProps, ["USER"])`, so ADMIN users were redirected to `/restricted`.
 - **Fix applied:** All use `withAuthPage(getServerSideProps)` with no second argument so any authenticated user (including ADMIN) can access them.
 
