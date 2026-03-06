@@ -37,6 +37,7 @@ export default function SimpleChart({ data }) {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: { display: false },
     },
