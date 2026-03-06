@@ -19,39 +19,23 @@ npx prisma migrate dev --name init
 Use any PostgreSQL provider: **Neon**, **Supabase**, **Railway**, **Render**, or **self-hosted PostgreSQL**.
 
 1. **Install dependencies**
-
-   ```bash
+  ```bash
    npm ci
-   ```
-
-2. **Set environment variables**
-
-   Create a `.env` file:
-
-   ```bash
-   DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DATABASE?sslmode=require"
-   JWT_SECRET=change-this-secret
-   ```
-
+  ```
+2. **Set up PostgreSQL**
    Examples:
-
-   - **Neon:** `postgresql://user:pass@ep-xxx.region.aws.neon.tech/neondb?sslmode=require`
-   - **Supabase:** `postgresql://postgres:pass@db.xxx.supabase.co:5432/postgres`
-   - **Local:** `postgresql://postgres:postgres@localhost:5432/app`
-
+  - **Neon:** `postgresql://user:pass@ep-xxx.region.aws.neon.tech/neondb?sslmode=require`
+  - **Supabase:** `postgresql://postgres:pass@db.xxx.supabase.co:5432/postgres`
+  - **Local:** `postgresql://postgres:postgres@localhost:5432/app`
 3. **Initialize Prisma**
-
-   ```bash
+  ```bash
    npx prisma generate
    npx prisma migrate dev --name init
-   ```
-
+  ```
 4. **Run application**
-
-   ```bash
+  ```bash
    npm run dev
-   ```
-
+  ```
    Then visit [http://localhost:3000](http://localhost:3000) and register your first user.
 
 ---
@@ -59,45 +43,35 @@ Use any PostgreSQL provider: **Neon**, **Supabase**, **Railway**, **Render**, or
 ### 🧩 Using Test Data (Recommended for Development)
 
 1. **Install dependencies**
-
-   ```bash
+  ```bash
    npm install
-   ```
-
-2. **Create environment file**
-
-   ```bash
-   DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DATABASE?sslmode=require"
-   JWT_SECRET=development_secret_key_change_me
-   ```
-
+  ```
+2. **Set environment file**
+  ```bash
+   export DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DATABASE?sslmode=require"
+   export JWT_SECRET="development_secret_key_change_me"
+  ```
 3. **Initialize the database**
-
-   ```bash
+  ```bash
    npx prisma generate
    npx prisma migrate dev --name init
-   ```
-
+  ```
 4. **Seed test users**
-
-   ```bash
+  ```bash
    npm run db:seed
-   ```
-
+  ```
    This creates 3 demo accounts:
 
-   | Username | Password |
-   | -------- | -------- |
-   | admin    | admin123 |
-   | testuser | test123  |
-   | demo     | demo123  |
+  | Username | Password |
+  | -------- | -------- |
+  | admin    | admin123 |
+  | testuser | test123  |
+  | demo     | demo123  |
 
 5. **Run in development**
-
-   ```bash
+  ```bash
    npm run dev
-   ```
-
+  ```
 6. Open [http://localhost:3000](http://localhost:3000) and sign in with any test account.
 
 ---
@@ -144,11 +118,13 @@ See **[USER_GUIDE.md](./USER_GUIDE.md)** for how to:
 
 ## 🧠 Modifying the App
 
+
 | Area          | Path                                        | Notes                                 |
 | ------------- | ------------------------------------------- | ------------------------------------- |
 | Pages & APIs  | `pages/`                                    | Add or modify routes and endpoints    |
 | Prisma Schema | `prisma/schema.prisma`                      | After edits: `npx prisma migrate dev` |
 | Styles        | `tailwind.config.js` & `styles/globals.css` | Customize UI / colors / fonts         |
+
 
 ---
 
@@ -157,13 +133,10 @@ See **[USER_GUIDE.md](./USER_GUIDE.md)** for how to:
 - This project uses **PostgreSQL only** (Neon, Supabase, self-hosted, or Docker).
 - Set `DATABASE_URL` to your Postgres connection string. For cloud providers (Neon, Supabase), add `?sslmode=require` when required.
 - After changing the schema, run:
-
   ```bash
   npx prisma migrate dev --name your_migration_name
   ```
-
   For production:
-
   ```bash
   npx prisma migrate deploy
   ```
@@ -172,10 +145,13 @@ See **[USER_GUIDE.md](./USER_GUIDE.md)** for how to:
 
 ## 📦 Summary
 
-| Environment | Database   | Run Command                 | Purpose          |
-| ----------- | ---------- | --------------------------- | ---------------- |
-| Dev         | PostgreSQL | `npm run dev`               | Local / cloud DB |
-| Docker      | PostgreSQL | `docker compose up --build` | Local Postgres   |
+
+| Environment | Database   | Run Command                 | Purpose              |
+| ----------- | ---------- | --------------------------- | -------------------- |
+| Dev         | PostgreSQL | `npm run dev`               | Local / cloud DB     |
+| Docker      | PostgreSQL | `docker compose up --build` | Local Postgres       |
 | Prod        | PostgreSQL | Vercel / `docker run`       | Neon, Supabase, etc. |
 
+
 ---
+

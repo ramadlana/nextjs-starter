@@ -49,14 +49,21 @@ export default function Login() {
           </div>
         </form>
         <br />
-        <a className="px-4 py-2 border rounded" href="/register">
-          Doesn't have an account? Register here
-        </a>
-        <br />
-        <a className="text-sm text-gray-500 mt-2 inline-block" href="/about">
-          About
-        </a>
-      </div>
+        <div className="mt-6 flex flex-col gap-2">
+          <a
+            href="/register"
+            className="block w-full text-center px-4 py-2 border border-indigo-600 rounded-lg text-indigo-700 font-medium hover:bg-indigo-50 transition"
+          >
+            Don&apos;t have an account? <span className="underline">Register here</span>
+          </a>
+          <a
+            href="/about"
+            className="block w-full text-center text-sm text-gray-500 hover:text-indigo-600 transition mt-1"
+          >
+            About this project
+          </a>
+        </div>
     </div>
+  </div>
   );
 }
