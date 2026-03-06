@@ -33,7 +33,7 @@ export default function Layout({ children, user }) {
             <div className="flex items-center gap-6">
               <Link href="/dashboard">
                 <span className="text-xl font-semibold text-white">
-                  NextJS Starter Kit
+                  Rama NextJS Starter Kit
                 </span>
               </Link>
 
