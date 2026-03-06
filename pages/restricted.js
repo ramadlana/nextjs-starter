@@ -1,5 +1,4 @@
-"use client";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 
 export default function RestrictedAccess() {
   const router = useRouter();

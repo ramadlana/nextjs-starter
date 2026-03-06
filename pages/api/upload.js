@@ -6,30 +6,50 @@ export const config = {
   api: { bodyParser: false },
 };
 
+const UPLOAD_TIMEOUT_MS = 30_000; // 30s
+
 async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ ok: false, error: "Method not allowed" });
   }
 
+  let responded = false;
+  function sendResponse(status, body) {
+    if (responded) return;
+    responded = true;
+    res.status(status).json(body);
+  }
+
+  const timeout = setTimeout(() => {
+    if (responded) return;
+    responded = true;
+    req.destroy();
+    res.status(408).json({ ok: false, error: "Request timeout" });
+  }, UPLOAD_TIMEOUT_MS);
+
   let raw = "";
   req.on("data", (chunk) => (raw += chunk));
 
   req.on("end", () => {
+    clearTimeout(timeout);
+    if (responded) return;
     try {
       // --- Parse JSON body ---
       const { filename, data } = JSON.parse(raw || "{}");
       if (!filename || !data) {
-        return res
-          .status(400)
-          .json({ ok: false, error: "Missing filename or data" });
+        return sendResponse(400, {
+          ok: false,
+          error: "Missing filename or data",
+        });
       }
 
       // --- Validate data URL format ---
       const matches = data.match(/^data:(.*);base64,(.*)$/);
       if (!matches) {
-        return res
-          .status(400)
-          .json({ ok: false, error: "Invalid data URL format" });
+        return sendResponse(400, {
+          ok: false,
+          error: "Invalid data URL format",
+        });
       }
 
       const mime = matches[1];
@@ -39,9 +59,10 @@ async function handler(req, res) {
       // --- Security: Size limit ---
       const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
       if (buffer.length > MAX_SIZE) {
-        return res
-          .status(400)
-          .json({ ok: false, error: "File too large (max 5MB)" });
+        return sendResponse(400, {
+          ok: false,
+          error: "File too large (max 5MB)",
+        });
       }
 
       // --- Extract extension BEFORE using it ---
@@ -69,9 +90,10 @@ async function handler(req, res) {
       ];
 
       if (!ALLOWED_MIME.includes(mime) || !ALLOWED_EXT.includes(ext)) {
-        return res
-          .status(400)
-          .json({ ok: false, error: "Unsupported file type" });
+        return sendResponse(400, {
+          ok: false,
+          error: "Unsupported file type",
+        });
       }
 
       // --- Sanitize filename and write ---
@@ -83,7 +105,7 @@ async function handler(req, res) {
       fs.writeFileSync(finalPath, buffer);
 
       // --- Success response ---
-      return res.status(200).json({
+      return sendResponse(200, {
         ok: true,
         url: `/uploads/${safeFilename}`,
         filename: safeFilename,
@@ -92,20 +114,14 @@ async function handler(req, res) {
       });
     } catch (err) {
       console.error("Upload error:", err);
-      if (!res.headersSent) {
-        return res
-          .status(500)
-          .json({ ok: false, error: "Server error while uploading" });
-      }
+      sendResponse(500, { ok: false, error: "Server error while uploading" });
     }
   });
 
-  // --- Safety fallback for stream errors ---
   req.on("error", (err) => {
+    clearTimeout(timeout);
     console.error("Stream error:", err);
-    if (!res.headersSent) {
-      res.status(500).json({ ok: false, error: "Request stream error" });
-    }
+    sendResponse(500, { ok: false, error: "Request stream error" });
   });
 }
 

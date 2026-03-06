@@ -1,6 +1,7 @@
 import prisma from "../../lib/prisma";
 import argon2 from "argon2";
 import { SignJWT } from "jose";
+import { getJwtSecret } from "../../lib/auth";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end();
@@ -12,9 +13,12 @@ export default async function handler(req, res) {
   const ok = await argon2.verify(user.password, password);
   if (!ok) return res.status(401).json({ error: "Invalid credentials" });
 
-  const secret = new TextEncoder().encode(
-    process.env.JWT_SECRET || "dev-secret"
-  );
+  let secret;
+  try {
+    secret = getJwtSecret();
+  } catch (err) {
+    return res.status(503).json({ error: "Server configuration error" });
+  }
   const token = await new SignJWT({
     sub: String(user.id),
     username: user.username,

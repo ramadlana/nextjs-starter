@@ -11,9 +11,12 @@ async function handler(req, res) {
   }
 
   try {
-    // req.user is automatically populated by withAuth middleware
+    const userId = parseInt(req.user.id, 10);
+    if (Number.isNaN(userId)) {
+      return res.status(400).json({ error: "Invalid user" });
+    }
     const user = await prisma.user.findUnique({
-      where: { id: req.user.id },
+      where: { id: userId },
       select: {
         id: true,
         username: true,

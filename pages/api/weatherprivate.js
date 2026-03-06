@@ -7,8 +7,14 @@ async function handler(req, res) {
   }
 
   const user = req.user;
-  const lat = req.query.lat || "-6.2"; // default Jakarta
-  const lon = req.query.lon || "106.8";
+  const latNum = parseFloat(req.query.lat, 10);
+  const lonNum = parseFloat(req.query.lon, 10);
+  const lat = Number.isFinite(latNum) && latNum >= -90 && latNum <= 90
+    ? latNum
+    : -6.2;
+  const lon = Number.isFinite(lonNum) && lonNum >= -180 && lonNum <= 180
+    ? lonNum
+    : 106.8;
   const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m`;
 
   try {
