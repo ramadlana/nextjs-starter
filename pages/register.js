@@ -1,5 +1,16 @@
 import { useState } from "react";
-import Layout from "../components/Layout";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -17,7 +28,6 @@ export default function Register() {
     const body = await res.json();
     if (res.ok) {
       setMsg("Registered — redirecting you to login page");
-      // redirect to login after a short delay
       setTimeout(() => {
         window.location.href = "/login";
       }, 1000);
@@ -27,34 +37,58 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full mx-4 bg-white p-6 rounded shadow">
-        <a className="text-sm text-blue-600 mb-4 inline-block" href="/login">
-          &larr; Back to Sign in
-        </a>
-        <h1 className="text-xl font-semibold mb-4">Register</h1>
-        <form onSubmit={submit} className="space-y-4">
-          <input
-            className="w-full p-2 border rounded"
-            placeholder="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <input
-            type="password"
-            className="w-full p-2 border rounded"
-            placeholder="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          {msg && <div className="text-sm text-slate-600">{msg}</div>}
-          <div>
-            <button className="px-4 py-2 bg-indigo-600 text-white rounded">
+    <div className="min-h-screen flex items-center justify-center bg-muted/40 p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <Link
+            href="/login"
+            className="text-sm text-primary hover:underline inline-block mb-2"
+          >
+            &larr; Back to Sign in
+          </Link>
+          <CardTitle className="text-2xl">Register</CardTitle>
+          <CardDescription>Create an account to get started.</CardDescription>
+        </CardHeader>
+        <form onSubmit={submit}>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="username" className="text-sm font-medium">
+                Username
+              </label>
+              <Input
+                id="username"
+                placeholder="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                autoComplete="username"
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="password" className="text-sm font-medium">
+                Password
+              </label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="new-password"
+              />
+            </div>
+            {msg && (
+              <Alert variant={msg.startsWith("Registered") ? "default" : "destructive"}>
+                <AlertDescription>{msg}</AlertDescription>
+              </Alert>
+            )}
+          </CardContent>
+          <CardFooter>
+            <Button type="submit" className="w-full">
               Register
-            </button>
-          </div>
+            </Button>
+          </CardFooter>
         </form>
-      </div>
+      </Card>
     </div>
   );
 }

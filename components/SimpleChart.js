@@ -25,8 +25,8 @@ export default function SimpleChart({ data }) {
       {
         label: "Metric",
         data: data.values,
-        borderColor: "#6366F1",
-        backgroundColor: "rgba(99,102,241,0.08)",
+        borderColor: "rgb(30 41 59)",
+        backgroundColor: "rgba(30, 41, 59, 0.08)",
         fill: true,
         tension: 0.3,
       },
@@ -40,7 +40,7 @@ export default function SimpleChart({ data }) {
     },
     scales: {
       x: { grid: { display: false } },
-      y: { grid: { color: "#f1f5f9" } },
+      y: { grid: { color: "rgb(226 232 240)" } },
     },
   };
 

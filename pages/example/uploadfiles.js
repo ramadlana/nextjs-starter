@@ -1,6 +1,16 @@
 import Layout from "../../components/Layout";
 import { withAuthPage } from "../../lib/auth";
 import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function Uploadfiles({ user }) {
   const [uploadFile, setUploadFile] = useState(null);
@@ -52,42 +62,51 @@ export default function Uploadfiles({ user }) {
 
   return (
     <Layout user={user}>
-      <div className="bg-white p-4 rounded shadow">
-        <pre>{JSON.stringify(user)}</pre>
-        <div className="mb-4">
-          <form onSubmit={handleSubmit} className="flex items-center space-x-2">
-            <input type="file" onChange={onFileChange} />
-            <button
-              type="submit"
-              className="px-4 py-2 border rounded"
-              disabled={uploading}
-            >
+      <Card>
+        <CardHeader>
+          <CardTitle>File Upload</CardTitle>
+          <CardDescription>
+            Upload a file (user: {user?.username})
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <pre className="rounded-lg bg-muted p-4 text-xs overflow-auto max-h-32">
+            {JSON.stringify(user, null, 2)}
+          </pre>
+          <form onSubmit={handleSubmit} className="flex flex-wrap items-center gap-3">
+            <Input
+              type="file"
+              onChange={onFileChange}
+              className="max-w-xs"
+            />
+            <Button type="submit" disabled={uploading}>
               {uploading ? "Uploading..." : "Upload"}
-            </button>
+            </Button>
           </form>
           {uploadError && (
-            <div className="text-red-600 mt-2">{uploadError}</div>
+            <Alert variant="destructive">
+              <AlertDescription>{uploadError}</AlertDescription>
+            </Alert>
           )}
           {uploadUrl && (
-            <div className="mt-2">
+            <p className="text-sm text-muted-foreground">
               Uploaded:{" "}
               <a
                 href={uploadUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="text-blue-600 underline"
+                className="text-primary hover:underline"
               >
                 {uploadUrl}
               </a>
-            </div>
+            </p>
           )}
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </Layout>
   );
 }
 
-// ✅ Page protected via SSR authentication
 export const getServerSideProps = withAuthPage(
   async (_context, user) => {
     return { props: { user } };

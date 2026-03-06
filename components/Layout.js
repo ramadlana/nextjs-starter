@@ -1,121 +1,63 @@
-import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function Layout({ children, user }) {
-  const [openProfile, setOpenProfile] = useState(false);
-  const [openDocs, setOpenDocs] = useState(false);
-  const [openAdmin, setOpenAdmin] = useState(false);
-  const refProfile = useRef();
-  const refDocs = useRef();
-  const refAdmin = useRef();
-
-  useEffect(() => {
-    function handleClickOutside(e) {
-      if (
-        refProfile.current &&
-        !refProfile.current.contains(e.target) &&
-        refDocs.current &&
-        !refDocs.current.contains(e.target) &&
-        refAdmin.current &&
-        !refAdmin.current.contains(e.target)
-      ) {
-        setOpenProfile(false);
-        setOpenDocs(false);
-        setOpenAdmin(false);
+  async function handleLogout(e) {
+    e.preventDefault();
+    try {
+      const res = await fetch("/api/logout", { method: "POST" });
+      if (res.ok) {
+        window.location.href = "/login";
+      } else {
+        alert("Logout failed. Please try again.");
       }
+    } catch (err) {
+      console.error("Logout error:", err);
+      alert("Something went wrong during logout.");
     }
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, []);
+  }
 
   return (
-    <div className="">
-      <nav className="bg-white border-b shadow-sm">
+    <div className="min-h-screen bg-background">
+      <nav className="sticky top-0 z-50 w-full border-b border-zinc-800 bg-zinc-900 text-zinc-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-14 items-center">
-            {/* Left section */}
-            <div className="flex items-center gap-4">
-              <Link
-                href="/dashboard"
-                className="text-xl font-semibold text-sky-600"
-              >
-                DashX
+            <div className="flex items-center gap-6">
+              <Link href="/dashboard">
+                <span className="text-xl font-semibold text-white">
+                  NextJS Starter Kit
+                </span>
               </Link>
 
-              <div className="hidden sm:flex items-center text-sm text-gray-600 gap-1">
-                <Link href="/dashboard" className="px-2 hover:text-sky-600">
-                  Home
+              <div className="hidden sm:flex items-center text-sm gap-1">
+                <Link href="/dashboard">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-zinc-400 hover:text-white hover:bg-white/10"
+                  >
+                    Home
+                  </Button>
                 </Link>
 
-                {/* 📘 Docs Dropdown */}
-                <div className="relative" ref={refDocs}>
-                  <button
-                    onClick={() => {
-                      setOpenDocs((s) => !s);
-                      setOpenAdmin(false);
-                      setOpenProfile(false);
-                    }}
-                    className="flex items-center gap-1 px-2 hover:text-sky-600"
-                  >
-                    Example
-                    <svg
-                      className="w-4 h-4 text-gray-500"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-zinc-400 hover:text-white hover:bg-white/10"
                     >
-                      <path
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </button>
-                  {openDocs && (
-                    <div className="absolute mt-2 w-44 bg-white border rounded-md shadow-lg z-20">
-                      <Link
-                        href="/example/fetchprivateapi"
-                        className="block px-4 py-2 text-sm hover:bg-gray-100"
-                      >
-                        Private Weather
-                      </Link>
-                      <Link
-                        href="/example/fetchpublicapi"
-                        className="block px-4 py-2 text-sm hover:bg-gray-100"
-                      >
-                        Public Weather
-                      </Link>
-                      <Link
-                        href="/example/uploadfiles"
-                        className="block px-4 py-2 text-sm hover:bg-gray-100"
-                      >
-                        File Upload
-                      </Link>
-                      <Link
-                        href="/example/role-based-route"
-                        className="block px-4 py-2 text-sm hover:bg-gray-100"
-                      >
-                        Role-based Route
-                      </Link>
-                    </div>
-                  )}
-                </div>
-
-                {/* ⚙️ Admin Dropdown */}
-                {user?.role === "ADMIN" && (
-                  <div className="relative" ref={refAdmin}>
-                    <button
-                      onClick={() => {
-                        setOpenAdmin((s) => !s);
-                        setOpenDocs(false);
-                        setOpenProfile(false);
-                      }}
-                      className="flex items-center gap-1 px-2 hover:text-sky-600"
-                    >
-                      Admin
+                      Example
                       <svg
-                        className="w-4 h-4 text-gray-500"
+                        className="w-4 h-4 opacity-50"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -127,108 +69,117 @@ export default function Layout({ children, user }) {
                           d="M19 9l-7 7-7-7"
                         />
                       </svg>
-                    </button>
-                    {openAdmin && (
-                      <div className="absolute mt-2 w-48 bg-white border rounded-md shadow-lg z-20">
-                        <Link
-                          href="/admin/users"
-                          className="block px-4 py-2 text-sm hover:bg-gray-100"
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-44">
+                    <DropdownMenuItem asChild>
+                      <Link href="/example/fetchprivateapi">Private Weather</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/example/fetchpublicapi">Public Weather</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/example/uploadfiles">File Upload</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/example/role-based-route">
+                        Role-based Route
+                      </Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                {user?.role === "ADMIN" && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-zinc-400 hover:text-white hover:bg-white/10"
+                      >
+                        Admin
+                        <svg
+                          className="w-4 h-4 opacity-50"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
                         >
-                          User Management
-                        </Link>
-                        <Link
-                          href="/admin/logs"
-                          className="block px-4 py-2 text-sm hover:bg-gray-100"
-                        >
-                          System Logs
-                        </Link>
-                      </div>
-                    )}
-                  </div>
+                          <path
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-48">
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin/users">User Management</Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin/logs">System Logs</Link>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 )}
               </div>
             </div>
 
-            {/* Right section */}
             <div className="flex items-center gap-4">
               <div className="hidden sm:block">
-                <input
-                  aria-label="Search"
-                  className="px-3 py-1 border rounded-md text-sm"
+                <Input
+                  type="search"
                   placeholder="Search..."
+                  className="w-[180px] md:w-[220px] bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500 focus-visible:ring-zinc-500"
+                  aria-label="Search"
                 />
               </div>
 
-              {/* Profile dropdown */}
-              <div className="relative" ref={refProfile}>
-                <button
-                  onClick={() => {
-                    setOpenProfile((s) => !s);
-                    setOpenDocs(false);
-                    setOpenAdmin(false);
-                  }}
-                  className="flex items-center gap-2 px-3 py-1 rounded-md hover:bg-gray-50"
-                >
-                  <span className="text-sm">{user?.username || "Guest"}</span>
-                  <svg
-                    className="w-5 h-5 text-gray-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="gap-2 text-zinc-400 hover:text-white hover:bg-white/10"
                   >
-                    <path
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </button>
-
-                {openProfile && (
-                  <div className="absolute right-0 mt-2 w-44 bg-white border rounded-md shadow-lg z-20">
-                    <Link
-                      href="/profile"
-                      className="block px-4 py-2 text-sm hover:bg-gray-100"
+                    <span className="text-sm">{user?.username || "Guest"}</span>
+                    <svg
+                      className="w-4 h-4 opacity-50"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
                     >
-                      Profile
-                    </Link>
-                    <Link
-                      href="/settings"
-                      className="block px-4 py-2 text-sm hover:bg-gray-100"
-                    >
-                      Settings
-                    </Link>
-                    <div className="border-t" />
-                    <button
-                      onClick={async (e) => {
-                        e.preventDefault();
-                        try {
-                          const res = await fetch("/api/logout", {
-                            method: "POST",
-                          });
-                          if (res.ok) {
-                            window.location.href = "/login";
-                          } else {
-                            alert("Logout failed. Please try again.");
-                          }
-                        } catch (err) {
-                          console.error("Logout error:", err);
-                          alert("Something went wrong during logout.");
-                        }
-                      }}
-                      className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-                    >
-                      Sign out
-                    </button>
-                  </div>
-                )}
-              </div>
+                      <path
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-44">
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile">Profile</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/settings">Settings</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onSelect={handleLogout}
+                    className="text-destructive focus:text-destructive"
+                  >
+                    Sign out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>
       </nav>
-      <main className="max-w-7xl mx-auto p-4 space-y-6">{children}</main>
+      <main className="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">{children}</main>
     </div>
   );
 }

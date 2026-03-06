@@ -1,17 +1,29 @@
 import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export default function About() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full bg-white p-8 rounded shadow">
-        <h1 className="text-2xl font-semibold mb-4">About</h1>
-        <p className="text-gray-600 mb-6">
-          This is a public page. No login required.
-        </p>
-        <Link href="/login" className="text-indigo-600 hover:underline">
-          Go to login
-        </Link>
-      </div>
+    <div className="min-h-screen flex items-center justify-center bg-muted/40 p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle className="text-2xl">About</CardTitle>
+          <CardDescription>
+            This is a public page. No login required.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Link href="/login">
+            <Button variant="outline">Go to login</Button>
+          </Link>
+        </CardContent>
+      </Card>
     </div>
   );
 }
