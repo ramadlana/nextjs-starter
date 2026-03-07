@@ -10,6 +10,15 @@ import {
   ChevronRight,
   ChevronDown,
   Menu,
+  Server,
+  Monitor,
+  Key,
+  Globe,
+  Upload,
+  Shield,
+  FileText,
+  Users,
+  ScrollText,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -25,17 +34,17 @@ const SIDEBAR_COLLAPSED_KEY = "sidebar-collapsed";
 
 // Single source of truth for sidebar menu (avoids defining links twice for collapsed vs expanded)
 const EXAMPLE_LINKS = [
-  { href: "/example/ssr", label: "SSR (Server-Side)", short: "SSR" },
-  { href: "/example/csr", label: "CSR (Client-Side)", short: "CSR" },
-  { href: "/example/server-proxy", label: "Server proxy (API key)", short: "Server proxy" },
-  { href: "/example/client-public-api", label: "Public API (direct)", short: "Public API" },
-  { href: "/example/uploadfiles", label: "File Upload", short: "File Upload" },
-  { href: "/example/role-based-route", label: "Role-based Route", short: "Role-based" },
-  { href: "/example/markdown", label: "Markdown", short: "Markdown" },
+  { href: "/example/ssr", label: "SSR (Server-Side)", short: "SSR", Icon: Server },
+  { href: "/example/csr", label: "CSR (Client-Side)", short: "CSR", Icon: Monitor },
+  { href: "/example/server-proxy", label: "Server proxy (API key)", short: "Server proxy", Icon: Key },
+  { href: "/example/client-public-api", label: "Public API (direct)", short: "Public API", Icon: Globe },
+  { href: "/example/uploadfiles", label: "File Upload", short: "File Upload", Icon: Upload },
+  { href: "/example/role-based-route", label: "Role-based Route", short: "Role-based", Icon: Shield },
+  { href: "/example/markdown", label: "Markdown", short: "Markdown", Icon: FileText },
 ];
 const ADMIN_LINKS = [
-  { href: "/admin/users", label: "User Management", short: "Users" },
-  { href: "/admin/logs", label: "System Logs", short: "Logs" },
+  { href: "/admin/users", label: "User Management", short: "Users", Icon: Users },
+  { href: "/admin/logs", label: "System Logs", short: "Logs", Icon: ScrollText },
 ];
 
 const iconClass = "shrink-0";
@@ -146,17 +155,23 @@ export default function Layout({ children, user }) {
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent side="right" align="start" className="w-52">
-              {EXAMPLE_LINKS.map(({ href, label }) => (
+              {EXAMPLE_LINKS.map(({ href, label, Icon }) => (
                 <DropdownMenuItem key={href} asChild>
-                  <Link href={href}>{label}</Link>
+                  <Link href={href} className="flex items-center gap-2">
+                    <Icon className="h-4 w-4 shrink-0" aria-hidden />
+                    {label}
+                  </Link>
                 </DropdownMenuItem>
               ))}
               {user?.role === "ADMIN" && (
                 <>
                   <DropdownMenuSeparator />
-                  {ADMIN_LINKS.map(({ href, label }) => (
+                  {ADMIN_LINKS.map(({ href, label, Icon }) => (
                     <DropdownMenuItem key={href} asChild>
-                      <Link href={href}>{label}</Link>
+                      <Link href={href} className="flex items-center gap-2">
+                        <Icon className="h-4 w-4 shrink-0" aria-hidden />
+                        {label}
+                      </Link>
                     </DropdownMenuItem>
                   ))}
                 </>
@@ -170,9 +185,9 @@ export default function Layout({ children, user }) {
                 Examples
               </span>
             </div>
-            {EXAMPLE_LINKS.map(({ href, short }) => (
+            {EXAMPLE_LINKS.map(({ href, short, Icon }) => (
               <Link key={href} href={href} className={navLinkClass(href)}>
-                <LayoutGrid className={cn("h-5 w-5", iconClass)} aria-hidden />
+                <Icon className={cn("h-5 w-5", iconClass)} aria-hidden />
                 <span>{short}</span>
               </Link>
             ))}
@@ -183,9 +198,9 @@ export default function Layout({ children, user }) {
                     Admin
                   </span>
                 </div>
-                {ADMIN_LINKS.map(({ href, short }) => (
+                {ADMIN_LINKS.map(({ href, short, Icon }) => (
                   <Link key={href} href={href} className={navLinkClass(href)}>
-                    <Settings className={cn("h-5 w-5", iconClass)} aria-hidden />
+                    <Icon className={cn("h-5 w-5", iconClass)} aria-hidden />
                     <span>{short}</span>
                   </Link>
                 ))}
@@ -211,9 +226,12 @@ export default function Layout({ children, user }) {
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent side="right" align="start" className="w-48">
-              {ADMIN_LINKS.map(({ href, label }) => (
+              {ADMIN_LINKS.map(({ href, label, Icon }) => (
                 <DropdownMenuItem key={href} asChild>
-                  <Link href={href}>{label}</Link>
+                  <Link href={href} className="flex items-center gap-2">
+                    <Icon className="h-4 w-4 shrink-0" aria-hidden />
+                    {label}
+                  </Link>
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
