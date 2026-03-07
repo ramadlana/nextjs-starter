@@ -13,6 +13,12 @@ async function handler(req, res) {
     return res.status(405).json({ ok: false, error: "Method not allowed" });
   }
 
+  const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+  const contentLength = parseInt(req.headers["content-length"], 10);
+  if (Number.isFinite(contentLength) && contentLength > MAX_SIZE) {
+    return res.status(413).json({ ok: false, error: "Request body too large (max 5MB)" });
+  }
+
   let responded = false;
   function sendResponse(status, body) {
     if (responded) return;
@@ -96,18 +102,18 @@ async function handler(req, res) {
         });
       }
 
-      // --- Sanitize filename and write ---
+      // --- Sanitize filename and write (outside public/ for access control) ---
       const safeFilename = `${base}_${Date.now()}${ext}`;
-      const uploadDir = path.join(process.cwd(), "public", "uploads");
+      const uploadDir = path.join(process.cwd(), "uploads");
       fs.mkdirSync(uploadDir, { recursive: true });
 
       const finalPath = path.join(uploadDir, safeFilename);
       fs.writeFileSync(finalPath, buffer);
 
-      // --- Success response ---
+      // --- Success response (served via protected /api/uploads/[filename]) ---
       return sendResponse(200, {
         ok: true,
-        url: `/uploads/${safeFilename}`,
+        url: `/api/uploads/${safeFilename}`,
         filename: safeFilename,
         mime,
         uploadedBy: req.user?.username || "unknown",

@@ -123,20 +123,16 @@ export default function Layout({ children, user }) {
 
   const isActive = (path) => router.pathname === path || router.pathname.startsWith(path + "/");
 
-  // Page title for navbar (friendly label for current route)
+  // Page title for navbar — derived from link arrays (single source of truth)
+  const pageTitlesFromLinks = Object.fromEntries([
+    ...EXAMPLE_LINKS.map(({ href, label }) => [href, label]),
+    ...ADMIN_LINKS.map(({ href, label }) => [href, label]),
+  ]);
   const pageTitles = {
     "/dashboard": "Dashboard",
     "/profile": "Profile",
     "/settings": "Settings",
-    "/example/ssr": "SSR (Server-Side)",
-    "/example/csr": "CSR (Client-Side)",
-    "/example/server-proxy": "Server proxy",
-    "/example/client-public-api": "Public API",
-    "/example/uploadfiles": "File Upload",
-    "/example/role-based-route": "Role-based Route",
-    "/example/markdown": "Markdown",
-    "/admin/users": "User Management",
-    "/admin/logs": "System Logs",
+    ...pageTitlesFromLinks,
   };
   const pageTitle =
     pageTitles[router.pathname] ||
@@ -184,6 +180,7 @@ export default function Layout({ children, user }) {
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 )}
                 title="Examples"
+                aria-label="Examples menu"
               >
                 <IconLayout className="h-5 w-5 shrink-0" />
               </button>
@@ -248,17 +245,17 @@ export default function Layout({ children, user }) {
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 )}
                 title="Admin"
+                aria-label="Admin menu"
               >
                 <IconAdmin className="h-5 w-5 shrink-0" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent side="right" align="start" className="w-48">
-              <DropdownMenuItem asChild>
-                <Link href="/admin/users">User Management</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/admin/logs">System Logs</Link>
-              </DropdownMenuItem>
+              {ADMIN_LINKS.map(({ href, label }) => (
+                <DropdownMenuItem key={href} asChild>
+                  <Link href={href}>{label}</Link>
+                </DropdownMenuItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
         )}
@@ -299,12 +296,13 @@ export default function Layout({ children, user }) {
         <button
           className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted min-w-0"
           title={user?.username || "Guest"}
+          aria-label={`User menu: ${user?.username || "Guest"}`}
         >
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
             <IconUser className="h-4 w-4" />
           </div>
           <span className="hidden truncate sm:inline max-w-[8rem]">{user?.username || "Guest"}</span>
-          <svg className="h-4 w-4 shrink-0 text-muted-foreground hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="h-4 w-4 shrink-0 text-muted-foreground hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </button>

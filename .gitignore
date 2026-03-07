@@ -129,6 +129,9 @@ prisma/migrations/**/*.lock
 tmp/
 temp/
 
+# User uploads (stored outside public/ for access control)
+uploads/
+
 # Lock files (optional - remove if you want to commit them)
 # package-lock.json
 # yarn.lock

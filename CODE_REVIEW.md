@@ -50,11 +50,11 @@
 
 ## 2. Security
 
-### 2.1 **Uploaded files are public**
+### 2.1 **Uploaded files are public** ✅ Fixed
 
-- **Where:** `pages/api/upload.js` writes to `public/uploads/`. Next.js serves `public/` at `/`.
-- **Issue:** Any file under `public/uploads/<filename>` is publicly accessible; no auth or ownership check.
-- **Fix:** If uploads must be private: (1) store files outside `public/` (e.g. `uploads/` in project root or cloud storage), and (2) serve via a protected API route that checks auth (and optionally file ownership in DB) and streams the file.
+- **Where:** `pages/api/upload.js` wrote to `public/uploads/`. Next.js served `public/` at `/`.
+- **Issue:** Any file under `public/uploads/<filename>` was publicly accessible; no auth or ownership check.
+- **Fix applied:** Files now stored in `uploads/` (project root, outside `public/`). Served via protected `GET /api/uploads/[filename]` with `withAuth`; only authenticated users can access. Added Content-Length check (413) before buffering. See AGENTS.md.
 
 ---
 
