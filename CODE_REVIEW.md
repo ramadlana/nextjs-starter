@@ -90,11 +90,11 @@
 
 ---
 
-### 3.2 **Chart.js registration on every mount**
+### 3.2 **Chart.js registration on every mount** ✅ Fixed
 
-- **Where:** `components/SimpleChart.js` — `ChartJS.register(...)` runs when the component mounts.
-- **Issue:** Registration is global; doing it in every instance is redundant and can cause warnings in strict mode.
-- **Fix:** Move `ChartJS.register(...)` to a single place (e.g. a small `lib/chartjs.js` that you import once in `_app.js` or at the top of `SimpleChart.js` and guard so it runs only once).
+- **Where:** `components/SimpleChart.js`, `BarChart.js`, `PieChart.js` — `ChartJS.register(...)` ran when each component mounted.
+- **Issue:** Registration is global; doing it in every instance was redundant and could cause warnings in strict mode.
+- **Fix applied:** Created `lib/chartjs.js` with all registrations; imported once in `_app.js`.
 
 ---
 

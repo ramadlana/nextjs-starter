@@ -1,19 +1,19 @@
 import fs from "fs";
 import path from "path";
-import { withAuth } from "../../lib/auth"; // ✅ fixed import path
+import { withAuth } from "../../lib/auth";
 
 export const config = {
   api: { bodyParser: false },
 };
 
 const UPLOAD_TIMEOUT_MS = 30_000; // 30s
+const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
 
 async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ ok: false, error: "Method not allowed" });
   }
 
-  const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
   const contentLength = parseInt(req.headers["content-length"], 10);
   if (Number.isFinite(contentLength) && contentLength > MAX_SIZE) {
     return res.status(413).json({ ok: false, error: "Request body too large (max 5MB)" });
@@ -63,7 +63,6 @@ async function handler(req, res) {
       const buffer = Buffer.from(base64, "base64");
 
       // --- Security: Size limit ---
-      const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
       if (buffer.length > MAX_SIZE) {
         return sendResponse(400, {
           ok: false,
