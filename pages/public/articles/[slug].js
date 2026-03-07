@@ -73,7 +73,7 @@ export async function getServerSideProps(context) {
     },
     include: {
       author: { select: { id: true, username: true } },
-      subcategory: { include: { category: true } },
+      category: { include: { parent: true } },
     },
   });
 

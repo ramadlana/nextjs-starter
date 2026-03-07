@@ -13,16 +13,14 @@ async function handler(req, res) {
       orderBy: { updatedAt: "desc" },
       include: {
         author: { select: { id: true, username: true } },
-        subcategory: {
-          include: { category: true },
-        },
+        category: { include: { parent: true } },
       },
     });
     return res.json(articles);
   }
 
   if (req.method === "POST") {
-    const { title, excerpt, content, coverImage, isPublic, subcategoryId } = req.body;
+    const { title, excerpt, content, coverImage, isPublic, categoryId } = req.body;
     if (!title || typeof title !== "string") {
       return res.status(400).json({ error: "Title is required" });
     }
@@ -42,13 +40,13 @@ async function handler(req, res) {
         content: content || "",
         coverImage: coverImage?.trim() || null,
         isPublic: Boolean(isPublic),
-        publishedAt: Boolean(isPublic) ? new Date() : null,
+        publishedAt: new Date(), // Both public and member articles are published on create
         authorId: Number(req.user.id),
-        subcategoryId: subcategoryId ? Number(subcategoryId) : null,
+        categoryId: categoryId ? Number(categoryId) : null,
       },
       include: {
         author: { select: { id: true, username: true } },
-        subcategory: { include: { category: true } },
+        category: { include: { parent: true } },
       },
     });
     return res.json(article);

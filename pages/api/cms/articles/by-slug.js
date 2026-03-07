@@ -32,7 +32,7 @@ async function handler(req, res) {
     },
     include: {
       author: { select: { id: true, username: true } },
-      subcategory: { include: { category: true } },
+      category: { include: { parent: true } },
     },
   });
 

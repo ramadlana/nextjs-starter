@@ -63,7 +63,7 @@ async function main() {
     }
   }
 
-  // Create sample CMS data
+  // Create sample CMS data (hierarchical categories: category > subcategory > subsubcategory > ...)
   const adminUser = await prisma.user.findUnique({ where: { username: "admin" } });
   if (adminUser) {
     const cat = await prisma.category.upsert({
@@ -76,13 +76,13 @@ async function main() {
         order: 0,
       },
     });
-    const sub = await prisma.subcategory.upsert({
-      where: { categoryId_slug: { categoryId: cat.id, slug: "overview" } },
+    const sub = await prisma.category.upsert({
+      where: { slug: "getting-started-overview" },
       update: {},
       create: {
         name: "Overview",
-        slug: "overview",
-        categoryId: cat.id,
+        slug: "getting-started-overview",
+        parentId: cat.id,
         order: 0,
       },
     });
@@ -97,7 +97,7 @@ async function main() {
         isPublic: false,
         publishedAt: new Date(),
         authorId: adminUser.id,
-        subcategoryId: sub.id,
+        categoryId: sub.id,
       },
     });
     await prisma.article.upsert({

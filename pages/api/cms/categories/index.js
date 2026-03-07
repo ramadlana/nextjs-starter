@@ -1,35 +1,49 @@
 import prisma from "@/lib/prisma";
 import { withRole } from "@/lib/auth";
 
+function slugify(name) {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[\s\W-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 async function handler(req, res) {
   if (req.method === "GET") {
-    const categories = await prisma.category.findMany({
+    const all = await prisma.category.findMany({
       orderBy: [{ order: "asc" }, { name: "asc" }],
-      include: {
-        subcategories: {
-          orderBy: [{ order: "asc" }, { name: "asc" }],
-        },
-      },
     });
-    return res.json(categories);
+    function buildTree(parentId) {
+      return all
+        .filter((c) => (c.parentId ?? null) === parentId)
+        .map((c) => ({ ...c, children: buildTree(c.id) }));
+    }
+    const tree = buildTree(null);
+    return res.json(tree);
   }
 
   if (req.method === "POST") {
-    const { name, description, order } = req.body;
+    const { name, description, order, parentId } = req.body;
     if (!name || typeof name !== "string") {
       return res.status(400).json({ error: "Name is required" });
     }
-    const slug = name
-      .toLowerCase()
-      .trim()
-      .replace(/[\s\W-]+/g, "-")
-      .replace(/^-+|-+$/g, "");
+    const nameSlug = slugify(name);
+    let slug = nameSlug;
+    if (parentId) {
+      const parent = await prisma.category.findUnique({
+        where: { id: Number(parentId) },
+      });
+      if (!parent) return res.status(400).json({ error: "Parent category not found" });
+      slug = `${parent.slug}-${nameSlug}`;
+    }
     const category = await prisma.category.create({
       data: {
         name: name.trim(),
         slug,
         description: description?.trim() || null,
         order: Number.isFinite(Number(order)) ? Number(order) : 0,
+        parentId: parentId ? Number(parentId) : null,
       },
     });
     return res.json(category);

@@ -12,7 +12,7 @@ async function handler(req, res) {
       where: { id },
       include: {
         author: { select: { id: true, username: true } },
-        subcategory: { include: { category: true } },
+        category: { include: { parent: true } },
       },
     });
     if (!article) return res.status(404).json({ error: "Article not found" });
@@ -20,7 +20,7 @@ async function handler(req, res) {
   }
 
   if (req.method === "PUT") {
-    const { title, excerpt, content, coverImage, isPublic, subcategoryId, slug } = req.body;
+    const { title, excerpt, content, coverImage, isPublic, categoryId, slug } = req.body;
     const article = await prisma.article.findUnique({ where: { id } });
     if (!article) return res.status(404).json({ error: "Article not found" });
 
@@ -31,10 +31,10 @@ async function handler(req, res) {
     if (typeof coverImage === "string") updateData.coverImage = coverImage.trim() || null;
     if (typeof isPublic === "boolean") {
       updateData.isPublic = isPublic;
-      if (isPublic && !article.publishedAt) updateData.publishedAt = new Date();
+      if (!article.publishedAt) updateData.publishedAt = new Date(); // Publish on save (public or member)
     }
-    if (subcategoryId !== undefined)
-      updateData.subcategoryId = subcategoryId ? Number(subcategoryId) : null;
+    if (categoryId !== undefined)
+      updateData.categoryId = categoryId ? Number(categoryId) : null;
     if (typeof slug === "string" && slug.trim()) {
       updateData.slug = slug
         .toLowerCase()
@@ -48,7 +48,7 @@ async function handler(req, res) {
       data: updateData,
       include: {
         author: { select: { id: true, username: true } },
-        subcategory: { include: { category: true } },
+        category: { include: { parent: true } },
       },
     });
     return res.json(updated);

@@ -8,6 +8,61 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
+function OutlineNode({ node, articleSlug, onNavClose, depth = 0 }) {
+  const { id, name, articles = [], children = [] } = node;
+  const pl = depth * 8 + 8;
+  return (
+    <div key={id}>
+      <h3
+        className="text-sm font-semibold text-foreground mb-2"
+        style={depth > 0 ? { paddingLeft: pl, fontSize: "0.8125rem" } : {}}
+      >
+        {name}
+      </h3>
+      {articles.length > 0 && (
+        <ul className="space-y-0.5" style={depth > 0 ? { paddingLeft: pl } : {}}>
+          {articles.map((a) => (
+            <li key={a.id}>
+              <Link
+                href={`/member-area/articles/${a.slug}`}
+                onClick={onNavClose}
+                className={cn(
+                  "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
+                  articleSlug === a.slug
+                    ? "bg-primary/10 text-primary font-medium"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                )}
+              >
+                <ChevronRight
+                  className={cn(
+                    "h-4 w-4 shrink-0",
+                    articleSlug === a.slug ? "opacity-100" : "opacity-50"
+                  )}
+                  aria-hidden
+                />
+                <span className="truncate">{a.title}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+      {children.length > 0 && (
+        <div className="mt-2">
+          {children.map((child) => (
+            <OutlineNode
+              key={child.id}
+              node={child}
+              articleSlug={articleSlug}
+              onNavClose={onNavClose}
+              depth={depth + 1}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function MemberAreaArticlesPage({ user }) {
   const router = useRouter();
   const slug = router.query.slug;
@@ -91,45 +146,12 @@ function MemberAreaArticlesPage({ user }) {
               </h2>
               <nav className="space-y-4">
                 {outline.map((category) => (
-                  <div key={category.id}>
-                    <h3 className="text-sm font-semibold text-foreground mb-2">
-                      {category.name}
-                    </h3>
-                    <ul className="space-y-1">
-                      {category.subcategories.map((sub) => (
-                        <li key={sub.id}>
-                          <span className="text-xs font-medium text-muted-foreground block mb-1 pl-2">
-                            {sub.name}
-                          </span>
-                          <ul className="space-y-0.5">
-                            {sub.articles.map((a) => (
-                              <li key={a.id}>
-                                <Link
-                                  href={`/member-area/articles/${a.slug}`}
-                                  onClick={() => setMobileNavOpen(false)}
-                                  className={cn(
-                                    "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
-                                    articleSlug === a.slug
-                                      ? "bg-primary/10 text-primary font-medium"
-                                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                                  )}
-                                >
-                                  <ChevronRight
-                                    className={cn(
-                                      "h-4 w-4 shrink-0",
-                                      articleSlug === a.slug ? "opacity-100" : "opacity-50"
-                                    )}
-                                    aria-hidden
-                                  />
-                                  <span className="truncate">{a.title}</span>
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  <OutlineNode
+                    key={category.id}
+                    node={category}
+                    articleSlug={articleSlug}
+                    onNavClose={() => setMobileNavOpen(false)}
+                  />
                 ))}
               </nav>
             </div>

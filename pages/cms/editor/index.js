@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ArrowLeft, Save, Loader2 } from "lucide-react";
+import { ArrowLeft, Save, Loader2, Plus, FolderPlus } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +25,20 @@ const ArticleEditor = dynamic(() => import("@/components/cms/ArticleEditor"), {
   ),
 });
 
+/** Flatten category tree to [{ id, path, pathLabel }] for select options */
+function flattenCategories(tree, path = [], pathLabel = []) {
+  const result = [];
+  for (const node of tree) {
+    const p = [...path, node.id];
+    const label = [...pathLabel, node.name];
+    result.push({ id: node.id, path: p, pathLabel: label.join(" › ") });
+    if (node.children?.length) {
+      result.push(...flattenCategories(node.children, p, label));
+    }
+  }
+  return result;
+}
+
 function EditorPage({ user }) {
   const router = useRouter();
   const { id } = router.query;
@@ -36,16 +50,27 @@ function EditorPage({ user }) {
   const [coverImage, setCoverImage] = useState("");
   const [slug, setSlug] = useState("");
   const [isPublic, setIsPublic] = useState(true);
-  const [subcategoryId, setSubcategoryId] = useState("");
+  const [categoryId, setCategoryId] = useState("");
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
+  // Category creation state
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [newSubcategoryName, setNewSubcategoryName] = useState("");
+  const [newSubcategoryParentId, setNewSubcategoryParentId] = useState("");
+  const [creatingCategory, setCreatingCategory] = useState(false);
+  const [creatingSubcategory, setCreatingSubcategory] = useState(false);
+
+  const refreshCategories = () => {
     fetch("/api/cms/categories")
       .then((r) => r.json())
       .then(setCategories)
       .catch(console.error);
+  };
+
+  useEffect(() => {
+    refreshCategories();
   }, []);
 
   useEffect(() => {
@@ -60,16 +85,14 @@ function EditorPage({ user }) {
           setCoverImage(article.coverImage || "");
           setSlug(article.slug);
           setIsPublic(article.isPublic);
-          setSubcategoryId(article.subcategoryId?.toString() || "");
+          setCategoryId(article.categoryId?.toString() || "");
         })
         .catch(console.error)
         .finally(() => setLoading(false));
     }
   }, [isEdit, id]);
 
-  const subcategories = categories.flatMap((c) =>
-    c.subcategories.map((s) => ({ ...s, categoryName: c.name }))
-  );
+  const flatCategories = flattenCategories(categories);
 
   const handleSave = async () => {
     if (!title.trim()) {
@@ -85,7 +108,7 @@ function EditorPage({ user }) {
         coverImage: coverImage.trim() || null,
         slug: slug.trim() || undefined,
         isPublic,
-        subcategoryId: subcategoryId ? Number(subcategoryId) : null,
+        categoryId: categoryId ? Number(categoryId) : null,
       };
       const url = isEdit ? `/api/cms/articles/${id}` : "/api/cms/articles";
       const method = isEdit ? "PUT" : "POST";
@@ -103,6 +126,59 @@ function EditorPage({ user }) {
       alert(err.message || "Failed to save");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleCreateCategory = async (e) => {
+    e.preventDefault();
+    if (!newCategoryName.trim()) return;
+    setCreatingCategory(true);
+    try {
+      const res = await fetch("/api/cms/categories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newCategoryName.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to create");
+      setNewCategoryName("");
+      refreshCategories();
+    } catch (err) {
+      alert(err.message || "Failed to create category");
+    } finally {
+      setCreatingCategory(false);
+    }
+  };
+
+  const handleCreateSubcategory = async (e) => {
+    e.preventDefault();
+    if (!newSubcategoryName.trim()) {
+      alert("Name is required");
+      return;
+    }
+    if (!newSubcategoryParentId) {
+      alert("Please select a parent category");
+      return;
+    }
+    setCreatingSubcategory(true);
+    try {
+      const res = await fetch("/api/cms/categories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: newSubcategoryName.trim(),
+          parentId: Number(newSubcategoryParentId),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to create");
+      setNewSubcategoryName("");
+      setNewSubcategoryParentId("");
+      refreshCategories();
+    } catch (err) {
+      alert(err.message || "Failed to create subcategory");
+    } finally {
+      setCreatingSubcategory(false);
     }
   };
 
@@ -139,6 +215,88 @@ function EditorPage({ user }) {
           </Button>
         </div>
 
+        {/* Category management */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FolderPlus className="h-5 w-5" aria-hidden />
+              Manage Categories
+            </CardTitle>
+            <CardDescription>
+              Create categories and subcategories. Supports unlimited nesting: category › subcategory › subsubcategory › ...
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <form onSubmit={handleCreateCategory} className="flex gap-2 items-end">
+              <div className="flex-1 min-w-0">
+                <label htmlFor="newCategory" className="block text-sm font-medium mb-1">
+                  New root category
+                </label>
+                <Input
+                  id="newCategory"
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                  placeholder="Category name"
+                  disabled={creatingCategory}
+                />
+              </div>
+              <Button type="submit" disabled={creatingCategory || !newCategoryName.trim()}>
+                {creatingCategory ? (
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                ) : (
+                  <Plus className="h-4 w-4" aria-hidden />
+                )}
+                Add
+              </Button>
+            </form>
+
+            <form onSubmit={handleCreateSubcategory} className="flex flex-wrap gap-2 items-end">
+              <div className="min-w-[140px]">
+                <label htmlFor="parentCategory" className="block text-sm font-medium mb-1">
+                  Parent
+                </label>
+                <select
+                  id="parentCategory"
+                  value={newSubcategoryParentId}
+                  onChange={(e) => setNewSubcategoryParentId(e.target.value)}
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
+                  disabled={creatingSubcategory}
+                >
+                  <option value="">Select parent...</option>
+                  {flatCategories.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.pathLabel}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex-1 min-w-[140px]">
+                <label htmlFor="newSubcategory" className="block text-sm font-medium mb-1">
+                  New subcategory
+                </label>
+                <Input
+                  id="newSubcategory"
+                  value={newSubcategoryName}
+                  onChange={(e) => setNewSubcategoryName(e.target.value)}
+                  placeholder="Subcategory name"
+                  disabled={creatingSubcategory}
+                />
+              </div>
+              <Button
+                type="submit"
+                disabled={creatingSubcategory || !newSubcategoryName.trim() || !newSubcategoryParentId}
+              >
+                {creatingSubcategory ? (
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                ) : (
+                  <Plus className="h-4 w-4" aria-hidden />
+                )}
+                Add subcategory
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader>
             <CardTitle>{isEdit ? "Edit Article" : "New Article"}</CardTitle>
@@ -174,19 +332,19 @@ function EditorPage({ user }) {
                 />
               </div>
               <div>
-                <label htmlFor="subcategory" className="block text-sm font-medium mb-1">
+                <label htmlFor="category" className="block text-sm font-medium mb-1">
                   Category
                 </label>
                 <select
-                  id="subcategory"
-                  value={subcategoryId}
-                  onChange={(e) => setSubcategoryId(e.target.value)}
+                  id="category"
+                  value={categoryId}
+                  onChange={(e) => setCategoryId(e.target.value)}
                   className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
                 >
                   <option value="">None</option>
-                  {subcategories.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.categoryName} › {s.name}
+                  {flatCategories.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.pathLabel}
                     </option>
                   ))}
                 </select>
