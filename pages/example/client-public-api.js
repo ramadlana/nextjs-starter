@@ -27,10 +27,14 @@ export default function ClientPublicApiExample({ user }) {
         );
         const data = await res.json();
         const hourly = data?.hourly || { time: [], temperature_2m: [] };
-        setWeather({
-          labels: hourly.time.slice(0, 12),
-          values: hourly.temperature_2m.slice(0, 12),
+        const times = hourly.time.slice(0, 12);
+        const temps = hourly.temperature_2m.slice(0, 12);
+        const labels = times.map((t) => {
+          if (typeof t !== "string") return String(t);
+          const m = t.match(/T(\d{2}):\d{2}/);
+          return m ? m[1] + ":00" : t.slice(-5);
         });
+        setWeather({ labels, values: temps });
       } catch (err) {
         console.error("Weather fetch failed:", err);
       } finally {
@@ -67,7 +71,9 @@ export default function ClientPublicApiExample({ user }) {
             </ul>
           </div>
           <h3 className="text-lg font-medium">Weekly stats (static)</h3>
-          <SimpleChart data={baseData} />
+          <div className="h-[220px] w-full">
+            <SimpleChart data={baseData} />
+          </div>
         </CardContent>
       </Card>
 
@@ -83,7 +89,11 @@ export default function ClientPublicApiExample({ user }) {
               <p className="text-muted-foreground italic">Loading…</p>
             </div>
           )}
-          {!loading && weather && <SimpleChart data={weather} />}
+          {!loading && weather && (
+            <div className="h-[220px] w-full">
+              <SimpleChart data={weather} />
+            </div>
+          )}
           {!loading && !weather && (
             <p className="text-destructive text-center py-8">Failed to load weather data</p>
           )}

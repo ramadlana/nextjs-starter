@@ -61,7 +61,9 @@ export default function ServerProxyExample({ user }) {
             {loading ? (
               <p className="text-center text-muted-foreground py-8">Loading…</p>
             ) : (
-              <SimpleChart data={weatherData} />
+              <div className="h-[220px] w-full">
+                <SimpleChart data={weatherData} />
+              </div>
             )}
           </div>
         </CardContent>
