@@ -50,7 +50,7 @@ This project supports two ways to import:
 | Goal                      | Page                                         | API                                           | What to use                            |
 | ------------------------- | -------------------------------------------- | --------------------------------------------- | -------------------------------------- |
 | Login required (any role) | `getServerSideProps = withAuthPage(fn)`      | `export default withAuth(handler)`            | —                                      |
-| Only certain roles        | `withAuthPage(fn, ["ADMIN"])`                | `export default withRole(handler, ["ADMIN"])` | User model has `role`: `USER`, `ADMIN` |
+| Only certain roles        | `withAuthPage(fn, ["ADMIN", "EDITOR"])`     | `export default withRole(handler, ["ADMIN"])` | User model has `role`: `USER`, `ADMIN`, `EDITOR` |
 | Public page (no auth)     | No `getServerSideProps` or no `withAuthPage` | —                                             | e.g. `pages/about.js`                  |
 | Data on server (SSR)      | Fetch in `getServerSideProps`                | —                                             | Pass as `props`                        |
 | Data in browser (CSR)     | `useEffect` + `fetch`                        | —                                             | Use protected API or public API        |
@@ -314,6 +314,30 @@ export default function About() {
 
 ---
 
+## 8.1 Content Management System (CMS)
+
+The CMS lets **ADMIN** and **EDITOR** users create and manage articles.
+
+| Route | Access | Description |
+|-------|--------|-------------|
+| `/cms` | ADMIN, EDITOR | Dashboard: list public and member articles |
+| `/cms/editor` | ADMIN, EDITOR | Rich editor (TipTap) for creating/editing articles |
+| `/public/articles/[slug]` | Public | SEO-optimized public articles |
+| `/member-area/articles` | Auth required | Member-only articles with course outline sidebar |
+| `/member-area/articles/[slug]` | Auth required | Single member article |
+
+**Article types:**
+- **Public** — visible at `/public/articles/[slug]`, indexed for SEO
+- **Member** — visible at `/member-area/articles/[slug]`, requires login, shown in sidebar outline
+
+**Editor features:** Bold, italic, headings, lists, blockquote, images (upload), links, YouTube embed, generic iframe embed (Vimeo, etc.).
+
+**Sidebar structure:** Category → Subcategory → Article (course outline style).
+
+**Test users:** `admin` / `admin123`, `editor` / `editor123`.
+
+---
+
 ## 9. File structure
 
 ```
@@ -334,6 +358,18 @@ pages/
   admin/
     users.js    # ADMIN only (placeholder)
     logs.js     # ADMIN only (placeholder)
+
+  cms/
+    index.js    # ADMIN, EDITOR — CMS dashboard
+    editor/     # ADMIN, EDITOR — article editor
+
+  public/articles/
+    [slug].js   # Public — SEO-optimized article page
+
+  member-area/
+    index.js    # Redirects to /member-area/articles
+    articles/
+      [[...slug]].js # Auth required — two-pane layout with sidebar
 
   example/
     ssr.js              # SSR example

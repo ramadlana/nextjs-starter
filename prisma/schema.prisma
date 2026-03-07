@@ -8,10 +8,55 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  email     String?  @unique
+  id        Int       @id @default(autoincrement())
+  username  String    @unique
+  email     String?   @unique
   password  String
-  role      String   @default("USER")
-  createdAt DateTime @default(now())
+  role      String    @default("USER")
+  articles  Article[]
+  createdAt DateTime  @default(now())
+}
+
+model Category {
+  id          Int          @id @default(autoincrement())
+  name        String
+  slug        String       @unique
+  description String?
+  order       Int          @default(0)
+  subcategories Subcategory[]
+  createdAt   DateTime     @default(now())
+}
+
+model Subcategory {
+  id         Int      @id @default(autoincrement())
+  name       String
+  slug      String
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  order      Int      @default(0)
+  articles   Article[]
+  createdAt  DateTime @default(now())
+
+  @@unique([categoryId, slug])
+}
+
+model Article {
+  id            Int      @id @default(autoincrement())
+  title         String
+  slug          String
+  excerpt       String?
+  content       String   // HTML from rich editor
+  coverImage    String?
+  isPublic      Boolean  @default(true) // true = /public/articles, false = /member-area/articles
+  publishedAt   DateTime?
+  authorId      Int
+  author        User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  subcategoryId Int?
+  subcategory   Subcategory? @relation(fields: [subcategoryId], references: [id], onDelete: SetNull)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([slug])
+  @@index([isPublic, publishedAt])
+  @@index([subcategoryId])
 }

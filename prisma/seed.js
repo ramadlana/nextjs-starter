@@ -15,6 +15,12 @@ async function main() {
       role: "ADMIN",
     },
     {
+      username: "editor",
+      password: "editor123",
+      description: "Editor for CMS",
+      role: "EDITOR",
+    },
+    {
       username: "testuser",
       password: "test123",
       description: "Standard test user",
@@ -57,9 +63,64 @@ async function main() {
     }
   }
 
+  // Create sample CMS data
+  const adminUser = await prisma.user.findUnique({ where: { username: "admin" } });
+  if (adminUser) {
+    const cat = await prisma.category.upsert({
+      where: { slug: "getting-started" },
+      update: {},
+      create: {
+        name: "Getting Started",
+        slug: "getting-started",
+        description: "Introduction and basics",
+        order: 0,
+      },
+    });
+    const sub = await prisma.subcategory.upsert({
+      where: { categoryId_slug: { categoryId: cat.id, slug: "overview" } },
+      update: {},
+      create: {
+        name: "Overview",
+        slug: "overview",
+        categoryId: cat.id,
+        order: 0,
+      },
+    });
+    await prisma.article.upsert({
+      where: { slug: "welcome" },
+      update: {},
+      create: {
+        title: "Welcome to Member Articles",
+        slug: "welcome",
+        excerpt: "Get started with the member area and explore our content.",
+        content: "<p>Welcome! This is a sample member-only article. You can create more articles in the CMS and organize them by category and subcategory.</p><p>The sidebar shows the course outline structure: <strong>Category &gt; Subcategory &gt; Article</strong>.</p>",
+        isPublic: false,
+        publishedAt: new Date(),
+        authorId: adminUser.id,
+        subcategoryId: sub.id,
+      },
+    });
+    await prisma.article.upsert({
+      where: { slug: "hello-world" },
+      update: {},
+      create: {
+        title: "Hello World",
+        slug: "hello-world",
+        excerpt: "A sample public article.",
+        content: "<p>This is a sample <strong>public</strong> article. It's visible to everyone at <code>/public/articles/hello-world</code>.</p><p>Public articles are indexed for SEO and don't require login.</p>",
+        isPublic: true,
+        publishedAt: new Date(),
+        authorId: adminUser.id,
+      },
+    });
+    console.log("   Sample CMS data created");
+  }
+
   console.log("\n📊 Database Statistics:");
   const userCount = await prisma.user.count();
+  const articleCount = await prisma.article.count();
   console.log(`   Total users: ${userCount}`);
+  console.log(`   Total articles: ${articleCount}`);
 
   console.log("\n✨ Seed completed successfully!");
 }

@@ -20,6 +20,8 @@ import {
   Users,
   ScrollText,
   BookOpen,
+  PenSquare,
+  Lock,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -46,6 +48,12 @@ const EXAMPLE_LINKS = [
 const ADMIN_LINKS = [
   { href: "/admin/users", label: "User Management", short: "Users", Icon: Users },
   { href: "/admin/logs", label: "System Logs", short: "Logs", Icon: ScrollText },
+];
+const CMS_LINKS = [
+  { href: "/cms", label: "Content Management", short: "CMS", Icon: PenSquare },
+];
+const MEMBER_LINKS = [
+  { href: "/member-area/articles", label: "Member Articles", short: "Articles", Icon: Lock },
 ];
 
 const iconClass = "shrink-0";
@@ -97,12 +105,18 @@ export default function Layout({ children, user }) {
   const pageTitlesFromLinks = Object.fromEntries([
     ...EXAMPLE_LINKS.map(({ href, label }) => [href, label]),
     ...ADMIN_LINKS.map(({ href, label }) => [href, label]),
+    ...CMS_LINKS.map(({ href, label }) => [href, label]),
+    ...MEMBER_LINKS.map(({ href, label }) => [href, label]),
   ]);
   const pageTitles = {
     "/dashboard": "Dashboard",
     "/profile": "Profile",
     "/settings": "Settings",
     "/user-guide": "User Guide",
+    "/cms": "Content Management",
+    "/cms/editor": "Editor",
+    "/member-area": "Member Area",
+    "/member-area/articles": "Member Articles",
     ...pageTitlesFromLinks,
   };
   const pageTitle =
@@ -145,13 +159,27 @@ export default function Layout({ children, user }) {
           {!collapsed && <span>User Guide</span>}
         </Link>
 
+        <Link href="/member-area/articles" className={navLinkClass("/member-area")} title="Member Articles">
+          <Lock className={cn("h-5 w-5", iconClass)} aria-hidden />
+          {!collapsed && <span>Member Articles</span>}
+        </Link>
+
+        {(user?.role === "ADMIN" || user?.role === "EDITOR") && (
+          <Link href="/cms" className={navLinkClass("/cms")} title="Content Management">
+            <PenSquare className={cn("h-5 w-5", iconClass)} aria-hidden />
+            {!collapsed && <span>CMS</span>}
+          </Link>
+        )}
+
         {collapsed ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
                 className={cn(
                   "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                  router.pathname.startsWith("/example") || router.pathname.startsWith("/admin")
+                  router.pathname.startsWith("/example") ||
+                  router.pathname.startsWith("/admin") ||
+                  router.pathname.startsWith("/cms")
                     ? "bg-primary/10 text-primary"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 )}
@@ -170,6 +198,23 @@ export default function Layout({ children, user }) {
                   </Link>
                 </DropdownMenuItem>
               ))}
+              {MEMBER_LINKS.map(({ href, label, Icon }) => (
+                <DropdownMenuItem key={href} asChild>
+                  <Link href={href} className="flex items-center gap-2">
+                    <Icon className="h-4 w-4 shrink-0" aria-hidden />
+                    {label}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+              {(user?.role === "ADMIN" || user?.role === "EDITOR") &&
+                CMS_LINKS.map(({ href, label, Icon }) => (
+                  <DropdownMenuItem key={href} asChild>
+                    <Link href={href} className="flex items-center gap-2">
+                      <Icon className="h-4 w-4 shrink-0" aria-hidden />
+                      {label}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
               {user?.role === "ADMIN" && (
                 <>
                   <DropdownMenuSeparator />
@@ -198,6 +243,21 @@ export default function Layout({ children, user }) {
                 <span>{short}</span>
               </Link>
             ))}
+            {(user?.role === "ADMIN" || user?.role === "EDITOR") && (
+              <>
+                <div className="px-3 pt-4 pb-1">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Content
+                  </span>
+                </div>
+                {CMS_LINKS.map(({ href, short, Icon }) => (
+                  <Link key={href} href={href} className={navLinkClass(href)}>
+                    <Icon className={cn("h-5 w-5", iconClass)} aria-hidden />
+                    <span>{short}</span>
+                  </Link>
+                ))}
+              </>
+            )}
             {user?.role === "ADMIN" && (
               <>
                 <div className="px-3 pt-4 pb-1">
