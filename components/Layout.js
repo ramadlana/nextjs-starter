@@ -22,7 +22,6 @@ const EXAMPLE_LINKS = [
   { href: "/example/uploadfiles", label: "File Upload", short: "File Upload" },
   { href: "/example/role-based-route", label: "Role-based Route", short: "Role-based" },
   { href: "/example/markdown", label: "Markdown", short: "Markdown" },
-  { href: "/example/tremor-ui", label: "Tremor UI", short: "Tremor UI" },
 ];
 const ADMIN_LINKS = [
   { href: "/admin/users", label: "User Management", short: "Users" },
@@ -136,7 +135,6 @@ export default function Layout({ children, user }) {
     "/example/uploadfiles": "File Upload",
     "/example/role-based-route": "Role-based Route",
     "/example/markdown": "Markdown",
-    "/example/tremor-ui": "Tremor UI",
     "/admin/users": "User Management",
     "/admin/logs": "System Logs",
   };
