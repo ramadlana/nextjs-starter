@@ -19,6 +19,7 @@ import {
   FileText,
   Users,
   ScrollText,
+  BookOpen,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -101,6 +102,7 @@ export default function Layout({ children, user }) {
     "/dashboard": "Dashboard",
     "/profile": "Profile",
     "/settings": "Settings",
+    "/user-guide": "User Guide",
     ...pageTitlesFromLinks,
   };
   const pageTitle =
@@ -136,6 +138,11 @@ export default function Layout({ children, user }) {
         <Link href="/dashboard" className={navLinkClass("/dashboard")} title="Home">
           <Home className={cn("h-5 w-5", iconClass)} aria-hidden />
           {!collapsed && <span>Home</span>}
+        </Link>
+
+        <Link href="/user-guide" className={navLinkClass("/user-guide")} title="User Guide">
+          <BookOpen className={cn("h-5 w-5", iconClass)} aria-hidden />
+          {!collapsed && <span>User Guide</span>}
         </Link>
 
         {collapsed ? (

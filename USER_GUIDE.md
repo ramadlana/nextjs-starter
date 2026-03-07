@@ -1,24 +1,48 @@
 # User Guide — Next.js Starter (DashX)
 
-This guide explains how to use this boilerplate: auth-required pages, role-based access, SSR vs client-side rendering, and API protection.
+This guide explains how to use this boilerplate: auth-required pages, role-based access, SSR vs client-side rendering, and API protection. Written for beginners — every example includes full imports so you can copy-paste without forgetting anything.
 
 ---
 
 ## Table of contents
 
-1. [Quick reference](#1-quick-reference)
-2. [Auth-required pages](#2-auth-required-pages)
-3. [Role-limited pages](#3-role-limited-pages)
-4. [Protecting API routes](#4-protecting-api-routes)
-5. [SSR (Server-Side Rendering)](#5-ssr-server-side-rendering)
-6. [Client-side rendering (CSR)](#6-client-side-rendering-csr)
-7. [Public vs protected pages](#7-public-vs-protected-pages)
-8. [File structure](#8-file-structure)
-9. [Step-by-step: new page and API](#9-step-by-step-new-page-and-api)
+1. [Before you start](#1-before-you-start)
+2. [Quick reference](#2-quick-reference)
+3. [Auth-required pages](#3-auth-required-pages)
+4. [Role-limited pages](#4-role-limited-pages)
+5. [Protecting API routes](#5-protecting-api-routes)
+6. [SSR (Server-Side Rendering)](#6-ssr-server-side-rendering)
+7. [Client-side rendering (CSR)](#7-client-side-rendering-csr)
+8. [Public vs protected pages](#8-public-vs-protected-pages)
+9. [File structure](#9-file-structure)
+10. [Step-by-step: new page and API](#10-step-by-step-new-page-and-api)
+11. [Common mistakes & tips](#11-common-mistakes--tips)
 
 ---
 
-## 1. Quick reference
+## 1. Before you start
+
+### Import paths
+
+This project supports two ways to import:
+
+| Path style | Example | When to use |
+|------------|---------|-------------|
+| **Relative** | `../components/Layout` | From `pages/dashboard.js` (one level down) |
+| **Relative** | `../../components/Layout` | From `pages/example/ssr.js` (two levels down) |
+| **Alias** | `@/components/Layout` | Works from any file — no need to count `../` |
+
+**Tip:** Use `@/` when in doubt — it always works. Example: `import Layout from "@/components/Layout"`.
+
+### What you'll need
+
+- **Layout** — wraps your page with sidebar, navbar, and user menu. Always pass `user={user}` for auth pages.
+- **withAuthPage** — protects pages; redirects to `/login` if not logged in.
+- **withAuth** / **withRole** — protects API routes; returns 401/403 if unauthorized.
+
+---
+
+## 2. Quick reference
 
 | Goal | Page | API | What to use |
 |------|------|-----|-------------|
@@ -37,15 +61,16 @@ This guide explains how to use this boilerplate: auth-required pages, role-based
 
 ---
 
-## 2. Auth-required pages
+## 3. Auth-required pages
 
 Any logged-in user can access the page. If not logged in, redirect to `/login`.
 
-**Pattern:**
+**Checklist:** Layout ✓ | withAuthPage ✓ | user prop ✓
 
 ```js
-import Layout from "../components/Layout";
-import { withAuthPage } from "../lib/auth";
+// pages/my-page.js
+import Layout from "@/components/Layout";
+import { withAuthPage } from "@/lib/auth";
 
 export default function MyPage({ user }) {
   return (
@@ -64,26 +89,30 @@ export const getServerSideProps = withAuthPage(async (context, user) => {
 
 - `pages/dashboard.js` — auth required (any role), optional server data
 - `pages/profile.js`, `pages/settings.js` — auth required (any role)
+- `pages/example/ssr.js` — SSR example
+- `pages/example/csr.js` — CSR example
 - `pages/example/server-proxy.js` — client calls your API route; server calls external API with key
 - `pages/example/client-public-api.js` — client calls public external API directly (no key)
 - `pages/example/uploadfiles.js` — auth + file upload to protected API
+- `pages/example/markdown.js` — markdown rendering example
 
 **Notes:**
 
-- `withAuthPage()` with one argument = “any authenticated user”.
-- The second argument (array of roles) is optional; omit it for “any role”.
+- `withAuthPage()` with one argument = "any authenticated user".
+- The second argument (array of roles) is optional; omit it for "any role".
 
 ---
 
-## 3. Role-limited pages
+## 4. Role-limited pages
 
 Only users whose `role` is in the allowed list can access the page. Others are redirected to `/restricted`.
 
-**Pattern:**
+**Checklist:** Layout ✓ | withAuthPage(..., ["ADMIN"]) ✓ | user prop ✓
 
 ```js
-import Layout from "../components/Layout";
-import { withAuthPage } from "../lib/auth";
+// pages/admin/my-admin-page.js
+import Layout from "@/components/Layout";
+import { withAuthPage } from "@/lib/auth";
 
 export default function AdminPage({ user }) {
   return (
@@ -110,15 +139,17 @@ export const getServerSideProps = withAuthPage(
 
 ---
 
-## 4. Protecting API routes
+## 5. Protecting API routes
 
 ### Any logged-in user
 
 Use `withAuth`. The handler receives `req.user` (`id`, `username`, `role`).
 
+**Checklist:** withAuth ✓ | req.user ✓
+
 ```js
 // pages/api/my-api.js
-import { withAuth } from "../../lib/auth";
+import { withAuth } from "@/lib/auth";
 
 async function handler(req, res) {
   if (req.method !== "GET") return res.status(405).end();
@@ -134,9 +165,11 @@ export default withAuth(handler);
 
 Use `withRole(handler, ["ADMIN"])`. Returns 403 if role is not allowed.
 
+**Checklist:** withRole ✓ | roles array ✓
+
 ```js
 // pages/api/admin/stats.js
-import { withRole } from "../../../lib/auth";
+import { withRole } from "@/lib/auth";
 
 async function handler(req, res) {
   if (req.method !== "GET") return res.status(405).end();
@@ -150,13 +183,17 @@ export default withRole(handler, ["ADMIN"]);
 
 ---
 
-## 5. SSR (Server-Side Rendering)
+## 6. SSR (Server-Side Rendering)
 
 Data is fetched on the server per request and passed as props. Good for SEO, first-load performance, and keeping secrets on the server.
 
-**Pattern:**
+**Checklist:** Layout ✓ | withAuthPage ✓ | getServerSideProps ✓ | props returned ✓
 
 ```js
+// pages/my-ssr-page.js
+import Layout from "@/components/Layout";
+import { withAuthPage } from "@/lib/auth";
+
 export default function Page({ user, serverData }) {
   return (
     <Layout user={user}>
@@ -177,7 +214,7 @@ export const getServerSideProps = withAuthPage(async (context, user) => {
 });
 ```
 
-**Example:** `pages/dashboard.js` — builds `chartData` in `getServerSideProps` and passes it as props.
+**Example:** `pages/example/ssr.js` — builds `serverData` in `getServerSideProps` and passes it as props.
 
 **When to use SSR:**
 
@@ -187,14 +224,17 @@ export const getServerSideProps = withAuthPage(async (context, user) => {
 
 ---
 
-## 6. Client-side rendering (CSR)
+## 7. Client-side rendering (CSR)
 
 Data is fetched in the browser (e.g. in `useEffect`). Good for user-specific or dynamic data after the page has loaded.
 
-**Pattern:**
+**Checklist:** Layout ✓ | withAuthPage ✓ | useState ✓ | useEffect ✓ | fetch ✓
 
 ```js
+// pages/my-csr-page.js
 import { useEffect, useState } from "react";
+import Layout from "@/components/Layout";
+import { withAuthPage } from "@/lib/auth";
 
 export default function Page({ user }) {
   const [data, setData] = useState(null);
@@ -210,8 +250,12 @@ export default function Page({ user }) {
     load();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
-  return <pre>{JSON.stringify(data)}</pre>;
+  if (loading) return <Layout user={user}><p>Loading...</p></Layout>;
+  return (
+    <Layout user={user}>
+      <pre>{JSON.stringify(data)}</pre>
+    </Layout>
+  );
 }
 
 export const getServerSideProps = withAuthPage(async (_c, user) => {
@@ -221,8 +265,9 @@ export const getServerSideProps = withAuthPage(async (_c, user) => {
 
 **Examples:**
 
-- `pages/example/server-proxy.js` — calls `/api/weatherprivate` (cookie sent automatically; server holds API key).
-- `pages/example/client-public-api.js` — calls public external API (e.g. Open-Meteo) from the browser.
+- `pages/example/csr.js` — calls `/api/user/profile` from the client
+- `pages/example/server-proxy.js` — calls `/api/weatherprivate` (cookie sent automatically; server holds API key)
+- `pages/example/client-public-api.js` — calls public external API (e.g. Open-Meteo) from the browser
 
 **When to use CSR:**
 
@@ -231,7 +276,7 @@ export const getServerSideProps = withAuthPage(async (_c, user) => {
 
 ---
 
-## 7. Public vs protected pages
+## 8. Public vs protected pages
 
 | Type | Example | How |
 |------|---------|-----|
@@ -239,15 +284,31 @@ export const getServerSideProps = withAuthPage(async (_c, user) => {
 | **Login required** | Dashboard, profile, settings, examples | `getServerSideProps = withAuthPage(...)` (no second argument = any authenticated user). |
 | **Role-only** | Admin panel | `getServerSideProps = withAuthPage(..., ["ADMIN"])`. |
 
-**Public page example:** `pages/about.js`.
+**Public page example:**
+
+```js
+// pages/about.js — no auth, no getServerSideProps
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+
+export default function About() {
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <Link href="/login">
+        <Button>Go to login</Button>
+      </Link>
+    </div>
+  );
+}
+```
 
 **Protected:** `pages/dashboard.js`, `pages/example/*`.
 
-**Redirect at root:** `pages/index.js` sends `/` to `/login` so the app feels “login-first”.
+**Redirect at root:** `pages/index.js` sends `/` to `/login` so the app feels "login-first".
 
 ---
 
-## 8. File structure
+## 9. File structure
 
 ```
 lib/
@@ -269,10 +330,13 @@ pages/
     logs.js     # ADMIN only (placeholder)
 
   example/
-    role-based-route.js   # ADMIN only
-    server-proxy.js      # Auth required; client → your API → external API (key on server)
-    client-public-api.js # Auth required; client → public external API (no key)
-    uploadfiles.js       # Auth required, file upload
+    ssr.js              # SSR example
+    csr.js              # CSR example
+    role-based-route.js # ADMIN only
+    server-proxy.js     # Auth required; client → your API → external API (key on server)
+    client-public-api.js# Auth required; client → public external API (no key)
+    uploadfiles.js      # Auth required, file upload
+    markdown.js         # Auth required, markdown rendering
 
   api/
     login.js
@@ -282,19 +346,21 @@ pages/
     weatherprivate.js   # withAuth
     user/profile.js     # withAuth
     admin/stats.js      # withRole(..., ["ADMIN"])
+    uploads/[filename].js # Serves uploaded files
 ```
 
 ---
 
-## 9. Step-by-step: new page and API
+## 10. Step-by-step: new page and API
 
-### Add an “auth required” page
+### Add an "auth required" page
 
 1. Create `pages/my-page.js`.
-2. Use `Layout` and accept `user` from props.
-3. Export `getServerSideProps = withAuthPage(async (context, user) => ({ props: { user } }))`.
+2. Import `Layout` and `withAuthPage`.
+3. Use `Layout` and accept `user` from props.
+4. Export `getServerSideProps = withAuthPage(async (context, user) => ({ props: { user } }))`.
 
-### Add a “role-only” page (e.g. admin)
+### Add a "role-only" page (e.g. admin)
 
 1. Same as above, but pass roles: `withAuthPage(fn, ["ADMIN"])`.
 2. Ensure the user's `role` in the DB is `ADMIN` (e.g. via seed or admin update).
@@ -314,6 +380,103 @@ pages/
 
 1. Create e.g. `pages/about.js`.
 2. Do **not** use `withAuthPage`. Optionally use `Layout` without `user` (or pass `user: null` and handle in Layout).
+
+---
+
+## 11. Common mistakes & tips
+
+### Forgot to import Layout
+
+```js
+// ❌ Page renders without sidebar/navbar
+export default function MyPage({ user }) {
+  return <h1>Hello</h1>;
+}
+
+// ✅ Correct
+import Layout from "@/components/Layout";
+export default function MyPage({ user }) {
+  return (
+    <Layout user={user}>
+      <h1>Hello</h1>
+    </Layout>
+  );
+}
+```
+
+### Forgot to import withAuthPage
+
+```js
+// ❌ Page is unprotected — anyone can access
+export const getServerSideProps = async (context) => {
+  return { props: { user: null } };
+};
+
+// ✅ Correct
+import { withAuthPage } from "@/lib/auth";
+export const getServerSideProps = withAuthPage(async (context, user) => {
+  return { props: { user } };
+});
+```
+
+### Wrong import path for auth
+
+```js
+// ❌ From pages/example/ssr.js — wrong path
+import { withAuthPage } from "../lib/auth";  // goes to pages/lib/auth (doesn't exist!)
+
+// ✅ Use relative from file location, or use alias
+import { withAuthPage } from "../../lib/auth";  // from pages/example/
+import { withAuthPage } from "@/lib/auth";      // alias — works everywhere
+```
+
+### API route: forgot to wrap with withAuth
+
+```js
+// ❌ Anyone can call this API
+export default async function handler(req, res) {
+  res.json({ user: req.user });  // req.user is undefined!
+}
+
+// ✅ Correct
+import { withAuth } from "@/lib/auth";
+async function handler(req, res) {
+  res.json({ user: req.user.username });
+}
+export default withAuth(handler);
+```
+
+### CSR: forgot to pass user to Layout
+
+```js
+// ❌ Layout shows "Guest" even when logged in
+export default function Page({ user }) {
+  const [data, setData] = useState(null);
+  return (
+    <Layout>  {/* missing user */}
+      <pre>{JSON.stringify(data)}</pre>
+    </Layout>
+  );
+}
+
+// ✅ Correct
+return <Layout user={user}>...</Layout>;
+```
+
+### Adding a new sidebar link
+
+To add a new item to the sidebar, edit `components/Layout.js` and add to `EXAMPLE_LINKS` or `ADMIN_LINKS`:
+
+```js
+{
+  href: "/example/my-new-page",
+  label: "My New Page (full title)",
+  short: "Short",
+  Icon: SomeLucideIcon,  // e.g. FileText, Upload, etc.
+}
+```
+
+Then import the icon from `lucide-react` at the top of `Layout.js`.
 
 ---
 
