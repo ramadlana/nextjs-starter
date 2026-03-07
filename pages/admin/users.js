@@ -1,5 +1,6 @@
 import Layout from "../../components/Layout";
 import { withAuthPage } from "../../lib/auth";
+import { Users } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -13,7 +14,10 @@ export default function AdminUsers({ user }) {
     <Layout user={user}>
       <Card>
         <CardHeader>
-          <CardTitle>User Management</CardTitle>
+          <div className="flex items-center gap-2">
+            <Users className="h-5 w-5 text-primary" aria-hidden />
+            <CardTitle>User Management</CardTitle>
+          </div>
           <CardDescription>
             Admin-only placeholder. Add user list and actions here.
           </CardDescription>

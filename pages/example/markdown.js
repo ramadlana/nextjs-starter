@@ -2,6 +2,7 @@ import Layout from "../../components/Layout";
 import { withAuthPage } from "../../lib/auth";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { FileText } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -73,7 +74,10 @@ export default function MarkdownExample({ user }) {
     <Layout user={user}>
       <Card>
         <CardHeader>
-          <CardTitle>Markdown render</CardTitle>
+          <div className="flex items-center gap-2">
+            <FileText className="h-5 w-5 text-primary" aria-hidden />
+            <CardTitle>Markdown render</CardTitle>
+          </div>
           <CardDescription>
             Content is defined in the page as a string and rendered with react-markdown. Edit the MARKDOWN constant in this file.
           </CardDescription>

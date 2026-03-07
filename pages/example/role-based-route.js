@@ -1,5 +1,6 @@
 import Layout from "../../components/Layout";
 import { withAuthPage } from "../../lib/auth";
+import { Shield } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -14,7 +15,10 @@ export default function Test({ user }) {
     <Layout user={user}>
       <Card>
         <CardHeader>
-          <CardTitle>Role-based Route</CardTitle>
+          <div className="flex items-center gap-2">
+            <Shield className="h-5 w-5 text-primary" aria-hidden />
+            <CardTitle>Role-based Route</CardTitle>
+          </div>
           <CardDescription>Only ADMIN role can access this page.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Link from "next/link";
+import { UserPlus, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -42,9 +43,10 @@ export default function Register() {
         <CardHeader className="space-y-1">
           <Link
             href="/login"
-            className="text-sm text-primary hover:underline inline-block mb-2"
+            className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline mb-2"
           >
-            &larr; Back to Sign in
+            <ArrowLeft className="h-4 w-4" aria-hidden />
+            Back to Sign in
           </Link>
           <CardTitle className="text-2xl">Register</CardTitle>
           <CardDescription>Create an account to get started.</CardDescription>
@@ -83,7 +85,8 @@ export default function Register() {
             )}
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full gap-2">
+              <UserPlus className="h-4 w-4" aria-hidden />
               Register
             </Button>
           </CardFooter>

@@ -1,6 +1,7 @@
+import { useState } from "react";
+import { Upload, Loader2 } from "lucide-react";
 import Layout from "../../components/Layout";
 import { withAuthPage } from "../../lib/auth";
-import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -64,7 +65,10 @@ export default function Uploadfiles({ user }) {
     <Layout user={user}>
       <Card>
         <CardHeader>
-          <CardTitle>File Upload</CardTitle>
+          <div className="flex items-center gap-2">
+            <Upload className="h-5 w-5 text-primary" aria-hidden />
+            <CardTitle>File Upload</CardTitle>
+          </div>
           <CardDescription>
             Upload a file (user: {user?.username})
           </CardDescription>
@@ -79,8 +83,18 @@ export default function Uploadfiles({ user }) {
               onChange={onFileChange}
               className="max-w-xs"
             />
-            <Button type="submit" disabled={uploading}>
-              {uploading ? "Uploading..." : "Upload"}
+            <Button type="submit" disabled={uploading} className="gap-2">
+              {uploading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                  Uploading...
+                </>
+              ) : (
+                <>
+                  <Upload className="h-4 w-4" aria-hidden />
+                  Upload
+                </>
+              )}
             </Button>
           </form>
           {uploadError && (

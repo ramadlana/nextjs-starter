@@ -1,5 +1,6 @@
 import Layout from "../components/Layout";
 import { withAuthPage } from "../lib/auth";
+import { User } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -13,7 +14,10 @@ export default function Profile({ user }) {
     <Layout user={user}>
       <Card>
         <CardHeader>
-          <CardTitle>Profile</CardTitle>
+          <div className="flex items-center gap-2">
+            <User className="h-5 w-5 text-primary" aria-hidden />
+            <CardTitle>Profile</CardTitle>
+          </div>
           <CardDescription>Your account information (dummy page)</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Loader2, Globe } from "lucide-react";
 import Layout from "../../components/Layout";
 import SimpleChart from "../../components/SimpleChart";
 import { withAuthPage } from "../../lib/auth";
@@ -48,7 +49,10 @@ export default function ClientPublicApiExample({ user }) {
     <Layout user={user}>
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle>Example: Client calls public API directly</CardTitle>
+          <div className="flex items-center gap-2">
+            <Globe className="h-5 w-5 text-primary" aria-hidden />
+            <CardTitle>Example: Client calls public API directly</CardTitle>
+          </div>
           <CardDescription>
             The browser calls the external API with no server in between. Only for public APIs that do not require a key.
           </CardDescription>
@@ -79,13 +83,16 @@ export default function ClientPublicApiExample({ user }) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Weather forecast (from public API)</CardTitle>
+          <div className="flex items-center gap-2">
+            <Globe className="h-5 w-5 text-primary" aria-hidden />
+            <CardTitle>Weather forecast (from public API)</CardTitle>
+          </div>
           <CardDescription>Live data from Open-Meteo, requested by the browser</CardDescription>
         </CardHeader>
         <CardContent>
           {loading && (
             <div className="flex flex-col items-center justify-center py-12 gap-3">
-              <div className="w-10 h-10 border-2 border-muted border-t-primary rounded-full animate-spin" aria-hidden />
+              <Loader2 className="h-10 w-10 text-primary animate-spin" aria-hidden />
               <p className="text-muted-foreground italic">Loading…</p>
             </div>
           )}

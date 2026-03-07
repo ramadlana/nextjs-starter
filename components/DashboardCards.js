@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { Users, Zap, Wallet, Server, CheckCircle, Cloud } from "lucide-react";
 
 export default function DashboardCards({ cards, userValue, activeValue, revenueValue, uptimeValue, tasksValue, weatherValue }) {
   const data = cards || [
@@ -92,45 +93,16 @@ export default function DashboardCards({ cards, userValue, activeValue, revenueV
   );
 }
 
+const ICON_MAP = {
+  users: Users,
+  bolt: Zap,
+  wallet: Wallet,
+  server: Server,
+  check: CheckCircle,
+  cloud: Cloud,
+};
+
 function renderIcon(name, className = "") {
-  const baseClass = `w-5 h-5 ${className}`;
-  switch (name) {
-    case "users":
-      return (
-        <svg className={baseClass} fill="currentColor" viewBox="0 0 20 20">
-          <path d="M13 7a3 3 0 11-6 0 3 3 0 016 0zM4 14s1-3 6-3 6 3 6 3v1H4v-1z" />
-        </svg>
-      );
-    case "bolt":
-      return (
-        <svg className={baseClass} fill="currentColor" viewBox="0 0 20 20">
-          <path d="M11 3L4 12h5l-1 5 7-9h-5l1-5z" />
-        </svg>
-      );
-    case "wallet":
-      return (
-        <svg className={baseClass} fill="currentColor" viewBox="0 0 20 20">
-          <path d="M2 6a2 2 0 012-2h12v2H4v8h12v2H4a2 2 0 01-2-2V6z" />
-        </svg>
-      );
-    case "server":
-      return (
-        <svg className={baseClass} fill="currentColor" viewBox="0 0 20 20">
-          <path d="M3 5h14v3H3V5zm0 4h14v3H3V9zm0 4h14v3H3v-3z" />
-        </svg>
-      );
-    case "check":
-      return (
-        <svg className={baseClass} fill="currentColor" viewBox="0 0 20 20">
-          <path d="M16.707 5.293l-8 8L3.293 8.879 4.707 7.465l4 4 7-7L16.707 5.293z" />
-        </svg>
-      );
-    case "cloud":
-    default:
-      return (
-        <svg className={baseClass} fill="currentColor" viewBox="0 0 20 20">
-          <path d="M5 15a4 4 0 010-8 5 5 0 011 9h8a3 3 0 000-6 4 4 0 10-8 2" />
-        </svg>
-      );
-  }
+  const Icon = ICON_MAP[name] ?? Cloud;
+  return <Icon className={cn("w-5 h-5", className)} aria-hidden />;
 }

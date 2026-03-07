@@ -1,5 +1,6 @@
 import Layout from "../../components/Layout";
 import { withAuthPage } from "../../lib/auth";
+import { Server } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -13,7 +14,10 @@ export default function ExampleSSR({ user, serverData }) {
     <Layout user={user}>
       <Card>
         <CardHeader>
-          <CardTitle>Example: Server-Side Rendering (SSR)</CardTitle>
+          <div className="flex items-center gap-2">
+            <Server className="h-5 w-5 text-primary" aria-hidden />
+            <CardTitle>Example: Server-Side Rendering (SSR)</CardTitle>
+          </div>
           <CardDescription>
             Data is fetched on the server per request and sent in the initial HTML.
           </CardDescription>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Link from "next/link";
+import { LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -74,7 +75,8 @@ export default function Login() {
             )}
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full gap-2">
+              <LogIn className="h-4 w-4" aria-hidden />
               Sign in
             </Button>
             <div className="w-full space-y-2 text-center text-sm">

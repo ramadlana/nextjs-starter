@@ -2,6 +2,16 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import {
+  Home,
+  LayoutGrid,
+  Settings,
+  User,
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  Menu,
+} from "lucide-react";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -28,57 +38,7 @@ const ADMIN_LINKS = [
   { href: "/admin/logs", label: "System Logs", short: "Logs" },
 ];
 
-// Icons as components for consistent sizing
-function IconHome({ className = "w-5 h-5" }) {
-  return (
-    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-    </svg>
-  );
-}
-function IconLayout({ className = "w-5 h-5" }) {
-  return (
-    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-    </svg>
-  );
-}
-function IconAdmin({ className = "w-5 h-5" }) {
-  return (
-    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-    </svg>
-  );
-}
-function IconUser({ className = "w-5 h-5" }) {
-  return (
-    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-    </svg>
-  );
-}
-function IconChevronLeft({ className = "w-5 h-5" }) {
-  return (
-    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-    </svg>
-  );
-}
-function IconChevronRight({ className = "w-5 h-5" }) {
-  return (
-    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-    </svg>
-  );
-}
-function IconMenu({ className = "w-5 h-5" }) {
-  return (
-    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-    </svg>
-  );
-}
+const iconClass = "shrink-0";
 
 export default function Layout({ children, user }) {
   const router = useRouter();
@@ -152,7 +112,7 @@ export default function Layout({ children, user }) {
       <div className="flex h-14 shrink-0 items-center gap-3 border-b border-sidebar-border px-3">
         <Link href="/dashboard" className="flex items-center gap-3 overflow-hidden">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <IconLayout className="h-5 w-5" />
+            <LayoutGrid className="h-5 w-5" aria-hidden />
           </div>
           {!collapsed && (
             <span className="truncate text-base font-semibold text-sidebar-foreground">
@@ -165,7 +125,7 @@ export default function Layout({ children, user }) {
       {/* Nav */}
       <nav className="flex flex-1 flex-col gap-0.5 overflow-auto p-2">
         <Link href="/dashboard" className={navLinkClass("/dashboard")} title="Home">
-          <IconHome className="h-5 w-5 shrink-0" />
+          <Home className={cn("h-5 w-5", iconClass)} aria-hidden />
           {!collapsed && <span>Home</span>}
         </Link>
 
@@ -182,7 +142,7 @@ export default function Layout({ children, user }) {
                 title="Examples"
                 aria-label="Examples menu"
               >
-                <IconLayout className="h-5 w-5 shrink-0" />
+                <LayoutGrid className={cn("h-5 w-5", iconClass)} aria-hidden />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent side="right" align="start" className="w-52">
@@ -212,7 +172,7 @@ export default function Layout({ children, user }) {
             </div>
             {EXAMPLE_LINKS.map(({ href, short }) => (
               <Link key={href} href={href} className={navLinkClass(href)}>
-                <IconLayout className="h-5 w-5 shrink-0" />
+                <LayoutGrid className={cn("h-5 w-5", iconClass)} aria-hidden />
                 <span>{short}</span>
               </Link>
             ))}
@@ -225,7 +185,7 @@ export default function Layout({ children, user }) {
                 </div>
                 {ADMIN_LINKS.map(({ href, short }) => (
                   <Link key={href} href={href} className={navLinkClass(href)}>
-                    <IconAdmin className="h-5 w-5 shrink-0" />
+                    <Settings className={cn("h-5 w-5", iconClass)} aria-hidden />
                     <span>{short}</span>
                   </Link>
                 ))}
@@ -247,7 +207,7 @@ export default function Layout({ children, user }) {
                 title="Admin"
                 aria-label="Admin menu"
               >
-                <IconAdmin className="h-5 w-5 shrink-0" />
+                <Settings className={cn("h-5 w-5", iconClass)} aria-hidden />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent side="right" align="start" className="w-48">
@@ -276,12 +236,12 @@ export default function Layout({ children, user }) {
         >
           {collapsed ? (
             <>
-              <IconChevronRight className="h-4 w-4 shrink-0" />
+              <ChevronRight className={cn("h-4 w-4", iconClass)} aria-hidden />
               <span className="text-[10px] font-medium leading-tight text-center">Show sidebar</span>
             </>
           ) : (
             <>
-              <IconChevronLeft className="h-4 w-4 shrink-0" />
+              <ChevronLeft className={cn("h-4 w-4", iconClass)} aria-hidden />
               <span className="text-xs font-medium">Minimize sidebar</span>
             </>
           )}
@@ -299,12 +259,10 @@ export default function Layout({ children, user }) {
           aria-label={`User menu: ${user?.username || "Guest"}`}
         >
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
-            <IconUser className="h-4 w-4" />
+            <User className="h-4 w-4" aria-hidden />
           </div>
           <span className="hidden truncate sm:inline max-w-[8rem]">{user?.username || "Guest"}</span>
-          <svg className="h-4 w-4 shrink-0 text-muted-foreground hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
+          <ChevronDown className={cn("h-4 w-4 shrink-0 text-muted-foreground hidden sm:block")} aria-hidden />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
@@ -367,7 +325,7 @@ export default function Layout({ children, user }) {
             onClick={() => setMobileOpen(true)}
             aria-label="Open menu"
           >
-            <IconMenu className="h-5 w-5" />
+            <Menu className="h-5 w-5" aria-hidden />
           </Button>
           <div className="flex-1 min-w-0 flex justify-center">
             <h1 className="text-sm font-semibold text-foreground truncate max-w-[200px] sm:max-w-xs" title={pageTitle}>

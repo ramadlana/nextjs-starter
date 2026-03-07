@@ -1,7 +1,8 @@
+import { useEffect, useState } from "react";
+import { Loader2, Shield } from "lucide-react";
 import Layout from "../../components/Layout";
 import SimpleChart from "../../components/SimpleChart";
 import { withAuthPage } from "../../lib/auth";
-import { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -34,7 +35,10 @@ export default function ServerProxyExample({ user }) {
     <Layout user={user}>
       <Card>
         <CardHeader>
-          <CardTitle>Example: Server as API proxy</CardTitle>
+          <div className="flex items-center gap-2">
+            <Shield className="h-5 w-5 text-primary" aria-hidden />
+            <CardTitle>Example: Server as API proxy</CardTitle>
+          </div>
           <CardDescription>
             Client calls your API route; the server calls the external API with a secret (e.g. API key). The key never leaves the server.
           </CardDescription>
@@ -59,7 +63,10 @@ export default function ServerProxyExample({ user }) {
           <div>
             <h3 className="text-lg font-medium mb-2">Weather (via API route)</h3>
             {loading ? (
-              <p className="text-center text-muted-foreground py-8">Loading…</p>
+              <div className="flex flex-col items-center justify-center py-12 gap-3">
+                <Loader2 className="h-10 w-10 text-primary animate-spin" aria-hidden />
+                <p className="text-muted-foreground italic">Loading…</p>
+              </div>
             ) : (
               <div className="h-[220px] w-full">
                 <SimpleChart data={weatherData} />

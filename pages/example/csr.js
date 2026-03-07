@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Loader2, Monitor } from "lucide-react";
 import Layout from "../../components/Layout";
 import { withAuthPage } from "../../lib/auth";
 import {
@@ -41,7 +42,10 @@ export default function ExampleCSR({ user }) {
     <Layout user={user}>
       <Card>
         <CardHeader>
-          <CardTitle>Example: Client-Side Rendering (CSR)</CardTitle>
+          <div className="flex items-center gap-2">
+            <Monitor className="h-5 w-5 text-primary" aria-hidden />
+            <CardTitle>Example: Client-Side Rendering (CSR)</CardTitle>
+          </div>
           <CardDescription>
             Data is fetched in the browser after the page loads, using useEffect + fetch.
           </CardDescription>
@@ -52,7 +56,7 @@ export default function ExampleCSR({ user }) {
             <h3 className="text-sm font-semibold text-foreground mb-2">Data from client (useEffect + fetch)</h3>
             {loading && (
               <div className="flex items-center gap-2 py-4 text-muted-foreground">
-                <div className="h-4 w-4 rounded-full border-2 border-muted-foreground border-t-transparent animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
                 <span className="text-sm">Loading...</span>
               </div>
             )}

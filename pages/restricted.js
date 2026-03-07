@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import { ShieldAlert, ArrowLeft } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -16,7 +17,9 @@ export default function RestrictedAccess() {
     <div className="min-h-screen flex items-center justify-center bg-muted/40 px-4">
       <Card className="max-w-md w-full text-center">
         <CardHeader>
-          <div className="text-5xl mb-2">🚫</div>
+          <div className="flex justify-center mb-2">
+            <ShieldAlert className="h-16 w-16 text-destructive" aria-hidden />
+          </div>
           <CardTitle className="text-2xl">Restricted Access</CardTitle>
           <CardDescription>
             You don&apos;t have permission to view this page.
@@ -26,7 +29,8 @@ export default function RestrictedAccess() {
         </CardHeader>
         <CardFooter className="flex justify-center">
           <Button onClick={() => router.back()} className="gap-2">
-            ⬅️ Go back to the previous page
+            <ArrowLeft className="h-4 w-4" aria-hidden />
+            Go back to the previous page
           </Button>
         </CardFooter>
       </Card>

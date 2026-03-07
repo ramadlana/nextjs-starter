@@ -1,5 +1,6 @@
 import Layout from "../components/Layout";
 import { withAuthPage } from "../lib/auth";
+import { Settings as SettingsIcon } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -13,7 +14,10 @@ export default function Settings({ user }) {
     <Layout user={user}>
       <Card>
         <CardHeader>
-          <CardTitle>Settings</CardTitle>
+          <div className="flex items-center gap-2">
+            <SettingsIcon className="h-5 w-5 text-primary" aria-hidden />
+            <CardTitle>Settings</CardTitle>
+          </div>
           <CardDescription>Manage your preferences (dummy page)</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

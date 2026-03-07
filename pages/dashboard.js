@@ -4,6 +4,7 @@ import SimpleChart from "../components/SimpleChart";
 import BarChart from "../components/BarChart";
 import PieChart from "../components/PieChart";
 import { withAuthPage } from "../lib/auth";
+import { LayoutDashboard } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -17,7 +18,8 @@ export default function Dashboard({ user, chartData, barData, pieData }) {
     <Layout user={user}>
       <div className="space-y-8">
         <section className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight">
+            <LayoutDashboard className="h-7 w-7 text-primary" aria-hidden />
             Welcome back, {user?.username}
           </h1>
           <p className="text-muted-foreground text-sm">

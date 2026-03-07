@@ -1,5 +1,6 @@
 import Layout from "../../components/Layout";
 import { withAuthPage } from "../../lib/auth";
+import { ScrollText } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -13,7 +14,10 @@ export default function AdminLogs({ user }) {
     <Layout user={user}>
       <Card>
         <CardHeader>
-          <CardTitle>System Logs</CardTitle>
+          <div className="flex items-center gap-2">
+            <ScrollText className="h-5 w-5 text-primary" aria-hidden />
+            <CardTitle>System Logs</CardTitle>
+          </div>
           <CardDescription>
             Admin-only placeholder. Add log viewer and filters here.
           </CardDescription>
