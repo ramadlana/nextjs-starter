@@ -98,7 +98,7 @@ function MemberAreaArticlesPage({ user }) {
   const showSidebar = outline.length > 0;
 
   return (
-    <Layout user={user}>
+    <Layout user={user} fullWidth>
       <div className="flex min-h-[calc(100vh-3.5rem)]">
         {/* Sidebar - course outline: Category > Subcategory > Article */}
         {showSidebar && (

@@ -58,7 +58,7 @@ const MEMBER_LINKS = [
 
 const iconClass = "shrink-0";
 
-export default function Layout({ children, user }) {
+export default function Layout({ children, user, fullWidth = false }) {
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -70,9 +70,13 @@ export default function Layout({ children, user }) {
 
   useEffect(() => {
     if (!mounted) return;
-    const stored = localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
-    if (stored !== null) setCollapsed(stored === "true");
-  }, [mounted]);
+    if (router.pathname.startsWith("/member-area/articles")) {
+      setCollapsed(true);
+    } else {
+      const stored = localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
+      if (stored !== null) setCollapsed(stored === "true");
+    }
+  }, [mounted, router.pathname]);
 
   // Close mobile drawer on route change
   useEffect(() => {
@@ -119,13 +123,23 @@ export default function Layout({ children, user }) {
     "/member-area/articles": "Member Articles",
     ...pageTitlesFromLinks,
   };
-  const pageTitle =
-    pageTitles[router.pathname] ||
-    (router.pathname === "/" ? "Home" : router.pathname.split("/").filter(Boolean).map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(" » "));
+  const getPageTitle = () => {
+    if (pageTitles[router.pathname]) return pageTitles[router.pathname];
+    if (router.pathname === "/") return "Home";
+    // Handle catch-all routes (e.g. /member-area/articles/[[...slug]] -> "Member Articles")
+    if (router.pathname.startsWith("/member-area/articles")) return "Member Articles";
+    const segments = router.pathname
+      .split("/")
+      .filter(Boolean)
+      .filter((s) => !s.startsWith("[") && !s.startsWith("(")); // skip dynamic segments
+    return segments.map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(" » ") || "Page";
+  };
+  const pageTitle = getPageTitle();
 
   const navLinkClass = (path) =>
     cn(
       "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+      collapsed && "justify-center px-0",
       isActive(path)
         ? "bg-primary/10 text-primary"
         : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -134,8 +148,13 @@ export default function Layout({ children, user }) {
   const sidebarContent = (
     <>
       {/* Brand */}
-      <div className="flex h-14 shrink-0 items-center gap-3 border-b border-sidebar-border px-3">
-        <Link href="/dashboard" className="flex items-center gap-3 overflow-hidden">
+      <div
+        className={cn(
+          "flex h-14 shrink-0 items-center border-b border-sidebar-border",
+          collapsed ? "justify-center px-0" : "gap-3 px-3"
+        )}
+      >
+        <Link href="/dashboard" className={cn("flex items-center overflow-hidden", collapsed ? "justify-center" : "gap-3")}>
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <LayoutGrid className="h-5 w-5" aria-hidden />
           </div>
@@ -176,7 +195,7 @@ export default function Layout({ children, user }) {
             <DropdownMenuTrigger asChild>
               <button
                 className={cn(
-                  "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                  "flex w-full items-center justify-center rounded-lg px-0 py-2.5 text-sm font-medium transition-colors",
                   router.pathname.startsWith("/example") ||
                   router.pathname.startsWith("/admin") ||
                   router.pathname.startsWith("/cms")
@@ -281,7 +300,7 @@ export default function Layout({ children, user }) {
             <DropdownMenuTrigger asChild>
               <button
                 className={cn(
-                  "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                  "flex w-full items-center justify-center rounded-lg px-0 py-2.5 text-sm font-medium transition-colors",
                   router.pathname.startsWith("/admin")
                     ? "bg-primary/10 text-primary"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -313,7 +332,7 @@ export default function Layout({ children, user }) {
           size="sm"
           className={cn(
             "w-full rounded-lg text-muted-foreground hover:text-foreground",
-            collapsed ? "flex-col gap-0.5 py-2 px-1 h-auto" : "justify-start gap-2 px-3"
+            collapsed ? "flex-col gap-0.5 py-2 px-1 h-auto items-center justify-center" : "justify-start gap-2 px-3"
           )}
           onClick={toggleSidebar}
           title={collapsed ? "Expand sidebar" : "Minimize sidebar"}
@@ -420,8 +439,8 @@ export default function Layout({ children, user }) {
           <div className="shrink-0">{userMenu}</div>
         </header>
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8">
-          <div className="mx-auto max-w-6xl">{children}</div>
+        <main className={cn("flex-1", fullWidth ? "p-0" : "p-4 sm:p-6 lg:p-8")}>
+          <div className={cn(fullWidth ? "w-full" : "mx-auto max-w-6xl")}>{children}</div>
         </main>
       </div>
     </div>
