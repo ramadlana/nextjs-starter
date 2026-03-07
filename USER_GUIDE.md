@@ -1,4 +1,4 @@
-# User Guide — Next.js Starter (DashX)
+# User Guide — Next.js Starterkit
 
 This guide explains how to use this boilerplate: auth-required pages, role-based access, SSR vs client-side rendering, and API protection. Written for beginners — every example includes full imports so you can copy-paste without forgetting anything.
 
@@ -26,11 +26,13 @@ This guide explains how to use this boilerplate: auth-required pages, role-based
 
 This project supports two ways to import:
 
-| Path style | Example | When to use |
-|------------|---------|-------------|
-| **Relative** | `../components/Layout` | From `pages/dashboard.js` (one level down) |
+
+| Path style   | Example                   | When to use                                   |
+| ------------ | ------------------------- | --------------------------------------------- |
+| **Relative** | `../components/Layout`    | From `pages/dashboard.js` (one level down)    |
 | **Relative** | `../../components/Layout` | From `pages/example/ssr.js` (two levels down) |
-| **Alias** | `@/components/Layout` | Works from any file — no need to count `../` |
+| **Alias**    | `@/components/Layout`     | Works from any file — no need to count `../`  |
+
 
 **Tip:** Use `@/` when in doubt — it always works. Example: `import Layout from "@/components/Layout"`.
 
@@ -44,13 +46,15 @@ This project supports two ways to import:
 
 ## 2. Quick reference
 
-| Goal | Page | API | What to use |
-|------|------|-----|-------------|
-| Login required (any role) | `getServerSideProps = withAuthPage(fn)` | `export default withAuth(handler)` | — |
-| Only certain roles | `withAuthPage(fn, ["ADMIN"])` | `export default withRole(handler, ["ADMIN"])` | User model has `role`: `USER`, `ADMIN` |
-| Public page (no auth) | No `getServerSideProps` or no `withAuthPage` | — | e.g. `pages/about.js` |
-| Data on server (SSR) | Fetch in `getServerSideProps` | — | Pass as `props` |
-| Data in browser (CSR) | `useEffect` + `fetch` | — | Use protected API or public API |
+
+| Goal                      | Page                                         | API                                           | What to use                            |
+| ------------------------- | -------------------------------------------- | --------------------------------------------- | -------------------------------------- |
+| Login required (any role) | `getServerSideProps = withAuthPage(fn)`      | `export default withAuth(handler)`            | —                                      |
+| Only certain roles        | `withAuthPage(fn, ["ADMIN"])`                | `export default withRole(handler, ["ADMIN"])` | User model has `role`: `USER`, `ADMIN` |
+| Public page (no auth)     | No `getServerSideProps` or no `withAuthPage` | —                                             | e.g. `pages/about.js`                  |
+| Data on server (SSR)      | Fetch in `getServerSideProps`                | —                                             | Pass as `props`                        |
+| Data in browser (CSR)     | `useEffect` + `fetch`                        | —                                             | Use protected API or public API        |
+
 
 **Auth helpers** (from `lib/auth.js`):
 
@@ -278,11 +282,13 @@ export const getServerSideProps = withAuthPage(async (_c, user) => {
 
 ## 8. Public vs protected pages
 
-| Type | Example | How |
-|------|---------|-----|
-| **Public** | Landing, about, pricing | No `getServerSideProps`, or use it without `withAuthPage`. No `user` prop required. |
+
+| Type               | Example                                | How                                                                                     |
+| ------------------ | -------------------------------------- | --------------------------------------------------------------------------------------- |
+| **Public**         | Landing, about, pricing                | No `getServerSideProps`, or use it without `withAuthPage`. No `user` prop required.     |
 | **Login required** | Dashboard, profile, settings, examples | `getServerSideProps = withAuthPage(...)` (no second argument = any authenticated user). |
-| **Role-only** | Admin panel | `getServerSideProps = withAuthPage(..., ["ADMIN"])`. |
+| **Role-only**      | Admin panel                            | `getServerSideProps = withAuthPage(..., ["ADMIN"])`.                                    |
+
 
 **Public page example:**
 
@@ -302,7 +308,7 @@ export default function About() {
 }
 ```
 
-**Protected:** `pages/dashboard.js`, `pages/example/*`.
+**Protected:** `pages/dashboard.js`, `pages/example/`*.
 
 **Redirect at root:** `pages/index.js` sends `/` to `/login` so the app feels "login-first".
 
@@ -487,3 +493,4 @@ Then import the icon from `lucide-react` at the top of `Layout.js`.
 - Consider rate limiting on `/api/login` and `/api/register`.
 - Run Prisma migrations and seed (or manage roles in your admin flow).
 - Ensure Node version matches (e.g. Node 20+) — see README.
+

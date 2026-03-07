@@ -1,5 +1,7 @@
 import fs from "fs";
 import path from "path";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 import Layout from "@/components/Layout";
 import { withAuthPage } from "@/lib/auth";
 import ReactMarkdown from "react-markdown";
@@ -13,10 +15,37 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+function slugify(text) {
+  return text
+    .toString()
+    .toLowerCase()
+    .replace(/\s*&\s*/g, "--")
+    .replace(/\s+/g, "-")
+    .replace(/\./g, "")
+    .replace(/[^a-z0-9-]/g, "");
+}
+
+function getTextContent(children) {
+  if (typeof children === "string") return children;
+  if (Array.isArray(children)) return children.map(getTextContent).join("");
+  if (children?.props?.children) return getTextContent(children.props.children);
+  return "";
+}
+
+const headingClass = "scroll-mt-24";
 const markdownComponents = {
-  h1: ({ node, ...props }) => <h1 className="text-2xl font-bold text-foreground mt-8 mb-4 first:mt-0 scroll-mt-20" {...props} />,
-  h2: ({ node, ...props }) => <h2 className="text-xl font-semibold text-foreground mt-8 mb-3 border-b border-border pb-2 scroll-mt-20" {...props} />,
-  h3: ({ node, ...props }) => <h3 className="text-lg font-semibold text-foreground mt-6 mb-2 scroll-mt-20" {...props} />,
+  h1: ({ node, children, ...props }) => {
+    const id = slugify(getTextContent(children));
+    return <h1 id={id} className={`text-2xl font-bold text-foreground mt-8 mb-4 first:mt-0 ${headingClass}`} {...props}>{children}</h1>;
+  },
+  h2: ({ node, children, ...props }) => {
+    const id = slugify(getTextContent(children));
+    return <h2 id={id} className={`text-xl font-semibold text-foreground mt-8 mb-3 border-b border-border pb-2 ${headingClass}`} {...props}>{children}</h2>;
+  },
+  h3: ({ node, children, ...props }) => {
+    const id = slugify(getTextContent(children));
+    return <h3 id={id} className={`text-lg font-semibold text-foreground mt-6 mb-2 ${headingClass}`} {...props}>{children}</h3>;
+  },
   p: ({ node, ...props }) => <p className="text-foreground text-sm leading-relaxed mb-3" {...props} />,
   ul: ({ node, ...props }) => <ul className="list-disc list-inside text-foreground text-sm mb-4 space-y-1 pl-2" {...props} />,
   ol: ({ node, ...props }) => <ol className="list-decimal list-inside text-foreground text-sm mb-4 space-y-1 pl-2" {...props} />,
@@ -40,6 +69,20 @@ const markdownComponents = {
 };
 
 export default function UserGuidePage({ user, content }) {
+  const router = useRouter();
+
+  useEffect(() => {
+    const scrollToHash = () => {
+      const hash = window.location.hash.slice(1);
+      if (!hash) return;
+      const el = document.getElementById(hash);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+    scrollToHash();
+    window.addEventListener("hashchange", scrollToHash);
+    return () => window.removeEventListener("hashchange", scrollToHash);
+  }, [content, router.asPath]);
+
   return (
     <Layout user={user}>
       <Card>
